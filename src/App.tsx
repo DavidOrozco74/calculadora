@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+
+type PieDataType = {
+  current: { name: string; value: number }[];
+  vc: { name: string; value: number }[];
+  debt: { name: string; value: number }[];
+  blend: { name: string; value: number }[];
+};
 
 function App() {
   const [inputs, setInputs] = useState({
@@ -48,7 +49,8 @@ function App() {
   });
 
   // Pie chart data
-  const [pieData, setPieData] = useState({
+
+  const [pieData, setPieData] = useState<PieDataType>({
     current: [],
     vc: [],
     debt: [],
@@ -59,7 +61,7 @@ function App() {
   const COLORS = ["#0088FE", "#00C49F", "#FF8042"];
 
   // Handle input changes
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     // Update other investors automatically when founder ownership changes
@@ -143,65 +145,79 @@ function App() {
     const blendExitValue = (blendNewOwnership / 100) * exitValuation;
 
     setResults({
-      vcDilution: vcDilution.toFixed(2),
-      vcNewOwnership: vcNewOwnership.toFixed(2),
-      vcOtherInvestorsNewOwnership: vcOtherInvestorsNewOwnership.toFixed(2),
-      vcNewInvestorOwnership: vcNewInvestorOwnership.toFixed(2),
-      debtWarrantDilution: warrantDilution.toFixed(2),
-      debtNewOwnership: debtNewOwnership.toFixed(2),
-      debtOtherInvestorsNewOwnership: debtOtherInvestorsNewOwnership.toFixed(2),
-      debtNewInvestorOwnership: debtNewInvestorOwnership.toFixed(2),
-      ownershipDifference: (debtNewOwnership - vcNewOwnership).toFixed(2),
-      vcExitValue: vcExitValue.toFixed(0),
-      debtExitValue: debtExitValue.toFixed(0),
-      exitValueDifference: (debtExitValue - vcExitValue).toFixed(0),
-      totalInterestPayments: totalInterestPayments.toFixed(0),
-      // Blend results
-      blendDilution: blendTotalDilution.toFixed(2),
-      blendNewOwnership: blendNewOwnership.toFixed(2),
-      blendOtherInvestorsNewOwnership:
-        blendOtherInvestorsNewOwnership.toFixed(2),
-      blendNewInvestorOwnership: blendNewInvestorOwnership.toFixed(2),
-      blendExitValue: blendExitValue.toFixed(0),
-      blendInterestPayments: blendInterestPayments.toFixed(0),
+      vcDilution: Number(vcDilution.toFixed(2)),
+      vcNewOwnership: Number(vcNewOwnership.toFixed(2)),
+      vcOtherInvestorsNewOwnership: Number(
+        vcOtherInvestorsNewOwnership.toFixed(2)
+      ),
+      vcNewInvestorOwnership: Number(vcNewInvestorOwnership.toFixed(2)),
+      debtWarrantDilution: Number(warrantDilution.toFixed(2)),
+      debtNewOwnership: Number(debtNewOwnership.toFixed(2)),
+      debtOtherInvestorsNewOwnership: Number(
+        debtOtherInvestorsNewOwnership.toFixed(2)
+      ),
+      debtNewInvestorOwnership: Number(debtNewInvestorOwnership.toFixed(2)),
+      ownershipDifference: Number(
+        (debtNewOwnership - vcNewOwnership).toFixed(2)
+      ),
+      vcExitValue: Number(vcExitValue.toFixed(0)),
+      debtExitValue: Number(debtExitValue.toFixed(0)),
+      exitValueDifference: Number((debtExitValue - vcExitValue).toFixed(0)),
+      totalInterestPayments: Number(totalInterestPayments.toFixed(0)),
+      blendDilution: Number(blendTotalDilution.toFixed(2)),
+      blendNewOwnership: Number(blendNewOwnership.toFixed(2)),
+      blendOtherInvestorsNewOwnership: Number(
+        blendOtherInvestorsNewOwnership.toFixed(2)
+      ),
+      blendNewInvestorOwnership: Number(blendNewInvestorOwnership.toFixed(2)),
+      blendExitValue: Number(blendExitValue.toFixed(0)),
+      blendInterestPayments: Number(blendInterestPayments.toFixed(0)),
     });
 
-    // Update pie chart data
     setPieData({
       current: [
-        { name: "Founders", value: inputs.founderOwnership },
-        { name: "Existing Investors", value: inputs.otherInvestorsOwnership },
+        { name: "Founders", value: Number(inputs.founderOwnership) },
+        {
+          name: "Existing Investors",
+          value: Number(inputs.otherInvestorsOwnership),
+        },
         { name: "New Investors", value: 0 },
       ],
       vc: [
-        { name: "Founders", value: parseFloat(vcNewOwnership) },
+        { name: "Founders", value: Number(vcNewOwnership) },
         {
           name: "Existing Investors",
-          value: parseFloat(vcOtherInvestorsNewOwnership),
+          value: Number(vcOtherInvestorsNewOwnership),
         },
-        { name: "New Investors", value: parseFloat(vcNewInvestorOwnership) },
+        { name: "New Investors", value: Number(vcNewInvestorOwnership) },
       ],
       debt: [
-        { name: "Founders", value: parseFloat(debtNewOwnership) },
+        { name: "Founders", value: Number(debtNewOwnership) },
         {
           name: "Existing Investors",
-          value: parseFloat(debtOtherInvestorsNewOwnership),
+          value: Number(debtOtherInvestorsNewOwnership),
         },
-        { name: "New Investors", value: parseFloat(debtNewInvestorOwnership) },
+        { name: "New Investors", value: Number(debtNewInvestorOwnership) },
       ],
       blend: [
-        { name: "Founders", value: parseFloat(blendNewOwnership) },
+        { name: "Founders", value: Number(blendNewOwnership) },
         {
           name: "Existing Investors",
-          value: parseFloat(blendOtherInvestorsNewOwnership),
+          value: Number(blendOtherInvestorsNewOwnership),
         },
-        { name: "New Investors", value: parseFloat(blendNewInvestorOwnership) },
+        { name: "New Investors", value: Number(blendNewInvestorOwnership) },
       ],
     });
   }, [inputs]);
 
   // Custom tooltip for the pie chart
-  const CustomTooltip = ({ active, payload }) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: any[];
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 border rounded shadow text-xs">
@@ -214,7 +230,7 @@ function App() {
   };
 
   // Format currency
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -554,263 +570,362 @@ function App() {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md col-span-2">
-          <h2 className="text-lg font-semibold mb-6 text-indigo-700 border-b pb-2">Equity Ownership Visualization</h2>
-          
-          <div className={`grid grid-cols-1 ${inputs.showHybridOption ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4 mb-8`}>
-            <div className="flex flex-col items-center">
-              <h3 className="text-md font-medium mb-2 text-gray-700">Current Ownership</h3>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData.current}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({name, value}) => `${name}: ${value.toFixed(1)}%`}
-                      labelLine={false}
-                    >
-                      {pieData.current.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+        <h2 className="text-lg font-semibold mb-6 text-indigo-700 border-b pb-2">
+          Equity Ownership Visualization
+        </h2>
+
+        <div
+          className={`grid grid-cols-1 ${
+            inputs.showHybridOption ? "md:grid-cols-4" : "md:grid-cols-3"
+          } gap-4 mb-8`}
+        >
+          <div className="flex flex-col items-center">
+            <h3 className="text-md font-medium mb-2 text-gray-700">
+              Current Ownership
+            </h3>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData.current}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.current.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            
-            <div className="flex flex-col items-center bg-green-50 rounded-lg p-4 shadow-md border-2 border-green-200">
-              <h3 className="text-md font-bold mb-2 text-green-800">After Venture Debt</h3>
+          </div>
+
+          <div className="flex flex-col items-center bg-green-50 rounded-lg p-4 shadow-md border-2 border-green-200">
+            <h3 className="text-md font-bold mb-2 text-green-800">
+              After Venture Debt
+            </h3>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData.debt}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={90}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.current.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-2 text-center bg-green-100 p-2 rounded-lg">
+              <span className="text-green-700 font-semibold">
+                Only -{results.debtWarrantDilution}% dilution
+              </span>
+            </div>
+          </div>
+
+          {inputs.showHybridOption && (
+            <div className="flex flex-col items-center bg-purple-50 rounded-lg p-4 shadow-md border-2 border-purple-200">
+              <h3 className="text-md font-bold mb-2 text-purple-800">
+                Blend: {inputs.vcPercentage}% Venture Capital /{" "}
+                {inputs.ventureDebtPercentage}% Debt
+              </h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={pieData.debt}
+                      data={pieData.blend}
                       cx="50%"
                       cy="50%"
                       innerRadius={65}
-                      outerRadius={90}
+                      outerRadius={85}
                       paddingAngle={2}
                       dataKey="value"
-                      label={({name, value}) => `${name}: ${value.toFixed(1)}%`}
+                      label={({ name, value }) =>
+                        `${name}: ${value.toFixed(1)}%`
+                      }
                       labelLine={false}
                     >
-                      {pieData.debt.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      {pieData.current.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-2 text-center bg-green-100 p-2 rounded-lg">
-                <span className="text-green-700 font-semibold">Only -{results.debtWarrantDilution}% dilution</span>
+              <div className="mt-2 text-center bg-purple-100 p-2 rounded-lg">
+                <span className="text-purple-700 font-semibold">
+                  -{results.blendDilution}% dilution
+                </span>
               </div>
             </div>
-            
-            {inputs.showHybridOption && (
-              <div className="flex flex-col items-center bg-purple-50 rounded-lg p-4 shadow-md border-2 border-purple-200">
-                <h3 className="text-md font-bold mb-2 text-purple-800">Blend: {inputs.vcPercentage}% Venture Capital / {inputs.ventureDebtPercentage}% Debt</h3>
-                <div className="h-64 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={pieData.blend}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={65}
-                        outerRadius={85}
-                        paddingAngle={2}
-                        dataKey="value"
-                        label={({name, value}) => `${name}: ${value.toFixed(1)}%`}
-                        labelLine={false}
-                      >
-                        {pieData.blend.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-2 text-center bg-purple-100 p-2 rounded-lg">
-                  <span className="text-purple-700 font-semibold">-{results.blendDilution}% dilution</span>
-                </div>
-              </div>
-            )}
-            
-            <div className="flex flex-col items-center opacity-85">
-              <h3 className="text-md font-medium mb-2 text-gray-700">After Venture Capital Funding</h3>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData.vc}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({name, value}) => `${name}: ${value.toFixed(1)}%`}
-                      labelLine={false}
-                    >
-                      {pieData.vc.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-2 text-center">
-                <span className="text-red-500 font-medium">-{results.vcDilution}% dilution</span>
-              </div>
+          )}
+
+          <div className="flex flex-col items-center opacity-85">
+            <h3 className="text-md font-medium mb-2 text-gray-700">
+              After Venture Capital Funding
+            </h3>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData.vc}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.current.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-blue-50 p-5 rounded-lg border border-blue-200">
-              <h3 className="text-lg font-medium mb-4 text-blue-800">Financing Impact Summary</h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Founder Ownership with Venture Capital:</span>
-                  <span className="font-semibold">{results.vcNewOwnership}%</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Founder Ownership with Debt:</span>
-                  <span className="font-semibold">{results.debtNewOwnership}%</span>
-                </div>
-                
-                {inputs.showHybridOption && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Founder Ownership with Blend:</span>
-                    <span className="font-semibold">{results.blendNewOwnership}%</span>
-                  </div>
-                )}
-                
-                <div className="flex items-center justify-between text-green-700">
-                  <span className="text-sm">Equity Preserved with Debt:</span>
-                  <span className="font-semibold">+{results.ownershipDifference}%</span>
-                </div>
-                
-                <div className="pt-2 border-t border-blue-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Founder Value at Exit (Venture Capital):</span>
-                    <span className="font-semibold">{formatCurrency(results.vcExitValue)}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Founder Value at Exit (Debt):</span>
-                    <span className="font-semibold">{formatCurrency(results.debtExitValue)}</span>
-                  </div>
-                  
-                  {inputs.showHybridOption && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Founder Value at Exit (Blend):</span>
-                      <span className="font-semibold">{formatCurrency(results.blendExitValue)}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between text-green-700">
-                    <span className="text-sm">Additional Exit Value (Debt vs Venture Capital):</span>
-                    <span className="font-semibold">+{formatCurrency(results.exitValueDifference)}</span>
-                  </div>
-                </div>
-                
-                <div className="pt-2 border-t border-blue-200">
-                  <div className="flex items-center justify-between text-red-600">
-                    <span className="text-sm">Total Interest (100% Debt):</span>
-                    <span className="font-semibold">{formatCurrency(results.totalInterestPayments)}</span>
-                  </div>
-                  
-                  {inputs.showHybridOption && (
-                    <div className="flex items-center justify-between text-red-600">
-                      <span className="text-sm">Total Interest (Blend):</span>
-                      <span className="font-semibold">{formatCurrency(results.blendInterestPayments)}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-indigo-50 p-5 rounded-lg border border-indigo-200">
-              <h3 className="text-lg font-medium mb-4 text-indigo-800">Key Insights</h3>
-              
-              <ul className="space-y-3 text-sm">
-                {parseFloat(results.ownershipDifference) > 0 ? (
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">●</span>
-                    <span>With venture debt, you retain <span className="font-semibold">{results.ownershipDifference}% more equity</span>, which translates to <span className="font-semibold">{formatCurrency(results.exitValueDifference)}</span> more value at exit.</span>
-                  </li>
-                ) : (
-                  <li className="flex items-start">
-                    <span className="text-red-500 mr-2">●</span>
-                    <span>In this scenario, venture debt does not provide significant equity preservation benefits.</span>
-                  </li>
-                )}
-                
-                <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">●</span>
-                  <span>Venture debt dilution is limited to warrant coverage of {inputs.warrantCoverage}%, compared to Venture Capital dilution of {results.vcDilution}%.</span>
-                </li>
-                
-                {inputs.showHybridOption && (
-                  <li className="flex items-start">
-                    <span className="text-purple-500 mr-2">●</span>
-                    <span>The blended approach allows you to balance equity preservation and cash flow needs.</span>
-                  </li>
-                )}
-                
-                {parseFloat(results.totalInterestPayments) < parseFloat(results.exitValueDifference) ? (
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">●</span>
-                    <span>Interest payments of {formatCurrency(results.totalInterestPayments)} are lower than the additional exit value of {formatCurrency(results.exitValueDifference)}, making debt financially advantageous.</span>
-                  </li>
-                ) : (
-                  <li className="flex items-start">
-                    <span className="text-yellow-500 mr-2">●</span>
-                    <span>Interest payments of {formatCurrency(results.totalInterestPayments)} may offset some of the equity preservation benefits.</span>
-                  </li>
-                )}
-                
-                <li className="flex items-start">
-                  <span className="text-indigo-500 mr-2">●</span>
-                  <span>Venture debt is ideally suited for companies with:</span>
-                </li>
-                
-                <ul className="ml-6 space-y-2">
-                  <li className="flex items-start">
-                    <span className="text-gray-500 mr-2">○</span>
-                    <span>Strong revenue or cash flow to service debt payments</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-gray-500 mr-2">○</span>
-                    <span>Clear path to additional funding or profitability</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-gray-500 mr-2">○</span>
-                    <span>Founders who prioritize ownership retention</span>
-                  </li>
-                </ul>
-                
-                <li className="flex items-start pt-2 border-t border-indigo-200">
-                  <span className="text-purple-500 mr-2">●</span>
-                  <span>{inputs.showHybridOption 
-                    ? "The optimal blend of VC and venture debt depends on your company's cash needs, growth trajectory, and equity goals." 
-                    : "Consider a hybrid approach: smaller equity round plus venture debt to optimize capital structure."}</span>
-                </li>
-              </ul>
+            <div className="mt-2 text-center">
+              <span className="text-red-500 font-medium">
+                -{results.vcDilution}% dilution
+              </span>
             </div>
           </div>
         </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-blue-50 p-5 rounded-lg border border-blue-200">
+            <h3 className="text-lg font-medium mb-4 text-blue-800">
+              Financing Impact Summary
+            </h3>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">
+                  Founder Ownership with Venture Capital:
+                </span>
+                <span className="font-semibold">{results.vcNewOwnership}%</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Founder Ownership with Debt:</span>
+                <span className="font-semibold">
+                  {results.debtNewOwnership}%
+                </span>
+              </div>
+
+              {inputs.showHybridOption && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Founder Ownership with Blend:</span>
+                  <span className="font-semibold">
+                    {results.blendNewOwnership}%
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between text-green-700">
+                <span className="text-sm">Equity Preserved with Debt:</span>
+                <span className="font-semibold">
+                  +{results.ownershipDifference}%
+                </span>
+              </div>
+
+              <div className="pt-2 border-t border-blue-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">
+                    Founder Value at Exit (Venture Capital):
+                  </span>
+                  <span className="font-semibold">
+                    {formatCurrency(results.vcExitValue)}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Founder Value at Exit (Debt):</span>
+                  <span className="font-semibold">
+                    {formatCurrency(results.debtExitValue)}
+                  </span>
+                </div>
+
+                {inputs.showHybridOption && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">
+                      Founder Value at Exit (Blend):
+                    </span>
+                    <span className="font-semibold">
+                      {formatCurrency(results.blendExitValue)}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between text-green-700">
+                  <span className="text-sm">
+                    Additional Exit Value (Debt vs Venture Capital):
+                  </span>
+                  <span className="font-semibold">
+                    +{formatCurrency(results.exitValueDifference)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-blue-200">
+                <div className="flex items-center justify-between text-red-600">
+                  <span className="text-sm">Total Interest (100% Debt):</span>
+                  <span className="font-semibold">
+                    {formatCurrency(results.totalInterestPayments)}
+                  </span>
+                </div>
+
+                {inputs.showHybridOption && (
+                  <div className="flex items-center justify-between text-red-600">
+                    <span className="text-sm">Total Interest (Blend):</span>
+                    <span className="font-semibold">
+                      {formatCurrency(results.blendInterestPayments)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-indigo-50 p-5 rounded-lg border border-indigo-200">
+            <h3 className="text-lg font-medium mb-4 text-indigo-800">
+              Key Insights
+            </h3>
+
+            <ul className="space-y-3 text-sm">
+              {(results.ownershipDifference ?? 0) > 0 ? (
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">●</span>
+                  <span>
+                    With venture debt, you retain{" "}
+                    <span className="font-semibold">
+                      {results.ownershipDifference}% more equity
+                    </span>
+                    , which translates to{" "}
+                    <span className="font-semibold">
+                      {formatCurrency(results.exitValueDifference)}
+                    </span>{" "}
+                    more value at exit.
+                  </span>
+                </li>
+              ) : (
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">●</span>
+                  <span>
+                    In this scenario, venture debt does not provide significant
+                    equity preservation benefits.
+                  </span>
+                </li>
+              )}
+
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2">●</span>
+                <span>
+                  Venture debt dilution is limited to warrant coverage of{" "}
+                  {inputs.warrantCoverage}%, compared to Venture Capital
+                  dilution of {results.vcDilution}%.
+                </span>
+              </li>
+
+              {inputs.showHybridOption && (
+                <li className="flex items-start">
+                  <span className="text-purple-500 mr-2">●</span>
+                  <span>
+                    The blended approach allows you to balance equity
+                    preservation and cash flow needs.
+                  </span>
+                </li>
+              )}
+
+              {(results.totalInterestPayments ?? 0) <
+              (results.exitValueDifference ?? 0) ? (
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">●</span>
+                  <span>
+                    Interest payments of{" "}
+                    {formatCurrency(results.totalInterestPayments)} are lower
+                    than the additional exit value of{" "}
+                    {formatCurrency(results.exitValueDifference)}, making debt
+                    financially advantageous.
+                  </span>
+                </li>
+              ) : (
+                <li className="flex items-start">
+                  <span className="text-yellow-500 mr-2">●</span>
+                  <span>
+                    Interest payments of{" "}
+                    {formatCurrency(results.totalInterestPayments)} may offset
+                    some of the equity preservation benefits.
+                  </span>
+                </li>
+              )}
+
+              <li className="flex items-start">
+                <span className="text-indigo-500 mr-2">●</span>
+                <span>Venture debt is ideally suited for companies with:</span>
+              </li>
+
+              <ul className="ml-6 space-y-2">
+                <li className="flex items-start">
+                  <span className="text-gray-500 mr-2">○</span>
+                  <span>
+                    Strong revenue or cash flow to service debt payments
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-gray-500 mr-2">○</span>
+                  <span>Clear path to additional funding or profitability</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-gray-500 mr-2">○</span>
+                  <span>Founders who prioritize ownership retention</span>
+                </li>
+              </ul>
+
+              <li className="flex items-start pt-2 border-t border-indigo-200">
+                <span className="text-purple-500 mr-2">●</span>
+                <span>
+                  {inputs.showHybridOption
+                    ? "The optimal blend of VC and venture debt depends on your company's cash needs, growth trajectory, and equity goals."
+                    : "Consider a hybrid approach: smaller equity round plus venture debt to optimize capital structure."}
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
