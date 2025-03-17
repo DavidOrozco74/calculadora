@@ -58,7 +58,7 @@ function App() {
   });
 
   // Colors for pie charts
-  const COLORS = ["#0088FE", "#00C49F", "#FF8042"];
+  const COLORS = ["#0057FF", "#888888", "#000000"];
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,7 +253,7 @@ function App() {
 
       <div>
         <div className="bg-white p-6 rounded-lg shadow-md col-span-1">
-          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">
+          <h2 className="text-lg font-semibold mb-4 text-blue-600 border-b border-gray-200 pb-2">
             Company Information
           </h2>
 
@@ -356,7 +356,7 @@ function App() {
                 />
                 <div
                   className={`w-12 h-6 flex items-center rounded-full p-0.5 duration-300 ease-in-out ${
-                    inputs.showHybridOption ? "bg-green-500" : "bg-gray-300"
+                    inputs.showHybridOption ? "bg-blue-600" : "bg-gray-300"
                   }`}
                 >
                   <div
@@ -432,7 +432,7 @@ function App() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
-                    className="bg-indigo-600 h-2.5 rounded-full"
+                    className="bg-blue-600 h-2.5 rounded-full"
                     style={{ width: `${inputs.vcPercentage}%` }}
                   ></div>
                 </div>
@@ -455,7 +455,7 @@ function App() {
             )}
           </div>
 
-          <h2 className="text-lg font-semibold mt-6 mb-4 text-indigo-700 border-b pb-2">
+          <h2 className="text-lg font-semibold mt-6 mb-4 text-blue-600 border-b border-gray-200 pb-2">
             Venture Debt Terms
           </h2>
 
@@ -527,7 +527,7 @@ function App() {
             </div>
           </div>
 
-          <h2 className="text-lg font-semibold mt-6 mb-4 text-indigo-700 border-b pb-2">
+          <h2 className="text-lg font-semibold mt-6 mb-4 text-blue-600 border-b border-gray-200 pb-2">
             Exit Assumptions
           </h2>
 
@@ -570,59 +570,52 @@ function App() {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md col-span-2">
-        <h2 className="text-lg font-semibold mb-6 text-indigo-700 border-b pb-2">
+        <h2 className="text-lg font-semibold mb-6 text-center text-blue-600 border-b border-gray-200 pb-2">
           Equity Ownership Visualization
         </h2>
-
-        <div
-          className={`grid grid-cols-1 ${
-            inputs.showHybridOption ? "md:grid-cols-4" : "md:grid-cols-3"
-          } gap-4 mb-8`}
-        >
-          <div className="flex flex-col items-center">
-            <h3 className="text-md font-medium mb-2 text-gray-700">
-              Current Ownership
-            </h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData.current}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={2}
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
-                    labelLine={false}
-                  >
-                    {pieData.current.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+        <div className="flex flex-col items-center bg-gray-100 p-4 mb-4 rounded-lg">
+          <h3 className="text-lg font-bold mb-2 text-black">
+            Current Ownership
+          </h3>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData.current}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                  label={({ name, value }) =>
+                    value > 0 ? `${name}: ${value}%` : ""
+                  }
+                  labelLine={false}
+                >
+                  {pieData.current.map((_entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
+        </div>
 
-          <div className="flex flex-col items-center bg-green-50 rounded-lg p-4 shadow-md border-2 border-green-200">
-            <h3 className="text-md font-bold mb-2 text-green-800">
-              After Venture Debt
-            </h3>
-            <div className="h-64 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Venture Debt Container */}
+          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">After Venture Debt</h3>
+            <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+              <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                   <Pie
                     data={pieData.debt}
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={90}
+                    innerRadius={80}
+                    outerRadius={110}
                     paddingAngle={2}
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
@@ -639,67 +632,27 @@ function App() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-2 text-center bg-green-100 p-2 rounded-lg">
-              <span className="text-green-700 font-semibold">
+            <div className="mt-4 text-center bg-[#6d93f5] p-3 rounded-lg">
+              <span className="text-white font-semibold text-base">
                 Only -{results.debtWarrantDilution}% dilution
               </span>
             </div>
           </div>
 
-          {inputs.showHybridOption && (
-            <div className="flex flex-col items-center bg-purple-50 rounded-lg p-4 shadow-md border-2 border-purple-200">
-              <h3 className="text-md font-bold mb-2 text-purple-800">
-                Blend: {inputs.vcPercentage}% Venture Capital /{" "}
-                {inputs.ventureDebtPercentage}% Debt
-              </h3>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData.blend}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={65}
-                      outerRadius={85}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({ name, value }) =>
-                        `${name}: ${value.toFixed(1)}%`
-                      }
-                      labelLine={false}
-                    >
-                      {pieData.current.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-2 text-center bg-purple-100 p-2 rounded-lg">
-                <span className="text-purple-700 font-semibold">
-                  -{results.blendDilution}% dilution
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-col items-center opacity-85">
-            <h3 className="text-md font-medium mb-2 text-gray-700">
+          {/* Venture Capital Container */}
+          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">
               After Venture Capital Funding
             </h3>
-            <div className="h-64 w-full">
+            <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData.vc}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
+                    innerRadius={80}
+                    outerRadius={110}
                     paddingAngle={2}
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
@@ -716,17 +669,60 @@ function App() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-2 text-center">
-              <span className="text-red-500 font-medium">
+            <div className="mt-4 text-center bg-[#6d93f5] p-3 rounded-lg">
+              <span className="text-white font-semibold text-base">
                 -{results.vcDilution}% dilution
               </span>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-blue-50 p-5 rounded-lg border border-blue-200">
-            <h3 className="text-lg font-medium mb-4 text-blue-800">
+        {inputs.showHybridOption && (
+          <div className="flex flex-col items-center  bg-gray-100 rounded-lg p-4 shadow-md mb-8">
+            <h3 className="text-md font-bold mb-2">
+              Blend: {inputs.vcPercentage}% Venture Capital /{" "}
+              {inputs.ventureDebtPercentage}% Debt
+            </h3>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData.blend}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={85}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.current.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-2 text-center bg-[#6d93f5] p-2 rounded-lg">
+              <span className="text-sky-50 font-semibold">
+                -{results.blendDilution}% dilution
+              </span>
+            </div>
+          </div>
+        )}
+
+        
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-md col-span-2">
+      <div className="grid grid-cols-1  gap-6">
+          <div className="bg-gray-100 p-5 rounded-lg">
+            <h3 className="text-lg font-medium mb-4 text-center text-blue-600 border-b border-gray-200 pb-2">
               Financing Impact Summary
             </h3>
 
@@ -754,14 +750,14 @@ function App() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-green-700">
+              <div className="flex items-center justify-between text-[#608df7]">
                 <span className="text-sm">Equity Preserved with Debt:</span>
                 <span className="font-semibold">
                   +{results.ownershipDifference}%
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-blue-200">
+              <div className="pt-2 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">
                     Founder Value at Exit (Venture Capital):
@@ -789,7 +785,7 @@ function App() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between text-green-700">
+                <div className="flex items-center justify-between text-[#608df7]">
                   <span className="text-sm">
                     Additional Exit Value (Debt vs Venture Capital):
                   </span>
@@ -799,8 +795,8 @@ function App() {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-blue-200">
-                <div className="flex items-center justify-between text-red-600">
+              <div className="pt-2 border-t border-gray-200">
+                <div className="flex items-center justify-between font-semibold">
                   <span className="text-sm">Total Interest (100% Debt):</span>
                   <span className="font-semibold">
                     {formatCurrency(results.totalInterestPayments)}
@@ -808,7 +804,7 @@ function App() {
                 </div>
 
                 {inputs.showHybridOption && (
-                  <div className="flex items-center justify-between text-red-600">
+                  <div className="flex items-center justify-between font-semibold">
                     <span className="text-sm">Total Interest (Blend):</span>
                     <span className="font-semibold">
                       {formatCurrency(results.blendInterestPayments)}
@@ -819,15 +815,15 @@ function App() {
             </div>
           </div>
 
-          <div className="bg-indigo-50 p-5 rounded-lg border border-indigo-200">
-            <h3 className="text-lg font-medium mb-4 text-indigo-800">
+          <div className="bg-gray-100 p-5 rounded-lg">
+            <h3 className="text-lg font-medium mb-4 text-center text-blue-600 border-b border-gray-200 pb-2">
               Key Insights
             </h3>
 
             <ul className="space-y-3 text-sm">
               {(results.ownershipDifference ?? 0) > 0 ? (
                 <li className="flex items-start">
-                  <span className="text-green-500 mr-2">●</span>
+                  <span className="text-[#0057FF] mr-2">■</span>
                   <span>
                     With venture debt, you retain{" "}
                     <span className="font-semibold">
@@ -842,7 +838,7 @@ function App() {
                 </li>
               ) : (
                 <li className="flex items-start">
-                  <span className="text-red-500 mr-2">●</span>
+                  <span className="text-[#608df7] mr-2">■</span>
                   <span>
                     In this scenario, venture debt does not provide significant
                     equity preservation benefits.
@@ -851,7 +847,7 @@ function App() {
               )}
 
               <li className="flex items-start">
-                <span className="text-blue-500 mr-2">●</span>
+                <span className="text-[#608df7] mr-2">■</span>
                 <span>
                   Venture debt dilution is limited to warrant coverage of{" "}
                   {inputs.warrantCoverage}%, compared to Venture Capital
@@ -861,7 +857,7 @@ function App() {
 
               {inputs.showHybridOption && (
                 <li className="flex items-start">
-                  <span className="text-purple-500 mr-2">●</span>
+                  <span className="text[#000000] mr-2">■</span>
                   <span>
                     The blended approach allows you to balance equity
                     preservation and cash flow needs.
@@ -872,7 +868,7 @@ function App() {
               {(results.totalInterestPayments ?? 0) <
               (results.exitValueDifference ?? 0) ? (
                 <li className="flex items-start">
-                  <span className="text-green-500 mr-2">●</span>
+                  <span className="text-[#0057FF] mr-2">■</span>
                   <span>
                     Interest payments of{" "}
                     {formatCurrency(results.totalInterestPayments)} are lower
@@ -893,7 +889,7 @@ function App() {
               )}
 
               <li className="flex items-start">
-                <span className="text-indigo-500 mr-2">●</span>
+                <span className="text-[#608df7] mr-2">■</span>
                 <span>Venture debt is ideally suited for companies with:</span>
               </li>
 
@@ -914,8 +910,8 @@ function App() {
                 </li>
               </ul>
 
-              <li className="flex items-start pt-2 border-t border-indigo-200">
-                <span className="text-purple-500 mr-2">●</span>
+              <li className="flex items-start pt-2 border-t border-gray-200">
+                <span className="text-[#000000] mr-2">■</span>
                 <span>
                   {inputs.showHybridOption
                     ? "The optimal blend of VC and venture debt depends on your company's cash needs, growth trajectory, and equity goals."
@@ -926,6 +922,7 @@ function App() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }
