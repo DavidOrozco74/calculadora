@@ -127,6 +127,7 @@ function App() {
         monthlyRate *
         Math.pow(1 + monthlyRate, inputs.ventureDebtTerm)) /
       (Math.pow(1 + monthlyRate, inputs.ventureDebtTerm) - 1);
+    //operacion totalInterestPayments
     const totalInterestPayments =
       fullDebtMonthlyPayment * inputs.ventureDebtTerm - inputs.fundingNeeded;
 
@@ -259,7 +260,7 @@ function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Current Valuation
               </label>
               <div className="relative">
@@ -277,7 +278,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Founder Ownership
               </label>
               <div className="relative">
@@ -297,7 +298,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Other Investors Ownership
               </label>
               <div className="relative">
@@ -317,7 +318,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Funding Needed
               </label>
               <div className="relative">
@@ -337,7 +338,7 @@ function App() {
 
           <div className="space-y-2 pt-4 ">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-blue-600">
                 {inputs.showHybridOption
                   ? "Hybrid Financing View Enabled"
                   : "Enable Hybrid Financing View"}
@@ -372,7 +373,7 @@ function App() {
               <div className="mt-4 space-y-4">
                 <div className="flex items-center space-x-2">
                   <div className="flex-1">
-                    <label className="text-xs text-gray-500">
+                    <label className="text-sm font-medium text-gray-500">
                       Venture Capital %
                     </label>
                     <div className="relative">
@@ -401,7 +402,7 @@ function App() {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <label className="text-xs text-gray-500">
+                    <label className="text-sm font-medium text-black">
                       Venture Debt %
                     </label>
                     <div className="relative">
@@ -462,7 +463,7 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Interest Rate */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Interest Rate
               </label>
               <div className="relative">
@@ -484,7 +485,7 @@ function App() {
 
             {/* Term Length */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Term Length
               </label>
               <div className="relative">
@@ -503,7 +504,7 @@ function App() {
 
             {/* Warrant Coverage (Debe tener el mismo ancho que los otros) */}
             <div className="md:col-span-1 space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Warrant Coverage
               </label>
               <div className="relative">
@@ -533,7 +534,7 @@ function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Exit Valuation Multiple
               </label>
               <input
@@ -548,7 +549,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-black">
                 Exit Timeframe
               </label>
               <div className="relative">
@@ -573,19 +574,19 @@ function App() {
         <h2 className="text-lg font-semibold mb-6 text-center text-blue-600 border-b border-gray-200 pb-2">
           Equity Ownership Visualization
         </h2>
-        <div className="flex flex-col items-center bg-gray-100 p-4 mb-4 rounded-lg">
+        <div className="flex flex-col items-center bg-gray-100 p-4 mb-4 rounded-lg w-full">
           <h3 className="text-lg font-bold mb-2 text-black">
             Current Ownership
           </h3>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-64 w-full max-w-2xl">
+            <ResponsiveContainer width="100%">
               <PieChart>
                 <Pie
                   data={pieData.current}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
+                  innerRadius={70}
+                  outerRadius={100}
                   paddingAngle={2}
                   dataKey="value"
                   label={({ name, value }) =>
@@ -594,7 +595,11 @@ function App() {
                   labelLine={false}
                 >
                   {pieData.current.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index]}
+                      style={{ fontWeight: "bold" }}
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
@@ -607,9 +612,9 @@ function App() {
           {/* Venture Debt Container */}
           <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full">
             <h3 className="text-lg font-bold mb-4">After Venture Debt</h3>
-            <div className="h-72 w-full">
+            <div className="h-72 w-md">
               <ResponsiveContainer width="100%" height="100%">
-              <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <PieChart>
                   <Pie
                     data={pieData.debt}
                     cx="50%"
@@ -618,13 +623,14 @@ function App() {
                     outerRadius={110}
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    label={({ name, value }) => `${name}: ${value.toFixed(0)}%`}
                     labelLine={false}
                   >
                     {pieData.current.map((_, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
+                        style={{ fontWeight: "bold" }}
                       />
                     ))}
                   </Pie>
@@ -662,6 +668,7 @@ function App() {
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
+                        style={{ fontWeight: "bold" }}
                       />
                     ))}
                   </Pie>
@@ -683,15 +690,15 @@ function App() {
               Blend: {inputs.vcPercentage}% Venture Capital /{" "}
               {inputs.ventureDebtPercentage}% Debt
             </h3>
-            <div className="h-64 w-full">
+            <div className="h-72 w-full flex justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData.blend}
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={85}
+                    innerRadius={70}
+                    outerRadius={100}
                     paddingAngle={2}
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
@@ -701,6 +708,7 @@ function App() {
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
+                        style={{ fontWeight: "bold" }}
                       />
                     ))}
                   </Pie>
@@ -715,12 +723,10 @@ function App() {
             </div>
           </div>
         )}
-
-        
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md col-span-2">
-      <div className="grid grid-cols-1  gap-6">
+        <div className="grid grid-cols-1  gap-6">
           <div className="bg-gray-100 p-5 rounded-lg">
             <h3 className="text-lg font-medium mb-4 text-center text-blue-600 border-b border-gray-200 pb-2">
               Financing Impact Summary
@@ -922,7 +928,6 @@ function App() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
