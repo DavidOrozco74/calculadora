@@ -605,7 +605,7 @@ function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Venture Debt Container */}
-          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full max-w-md">
+          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full">
             <h3 className="text-lg font-bold mb-4">After Venture Debt</h3>
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -640,7 +640,7 @@ function App() {
           </div>
 
           {/* Venture Capital Container */}
-          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full max-w-md">
+          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full">
             <h3 className="text-lg font-bold mb-4">
               After Venture Capital Funding
             </h3>
