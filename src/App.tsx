@@ -12,6 +12,8 @@ import {
 } from "recharts";
 import BubbleComponent from "./components/bubbleGrafic";
 
+
+
 type PieDataType = {
   current: { name: string; value: number }[];
   vc: { name: string; value: number }[];
@@ -360,15 +362,17 @@ function App() {
                   name="companyValuation"
                   value={inputs.companyValuation.toLocaleString("en-US")} // Formato con puntos
                   onChange={(e) => {
-                    // Elimina puntos y valida el valor numérico
-                    const rawValue = e.target.value.replace(/\,/g, "");
-                    if (!isNaN(rawValue)) {
-                      handleInputChange({
+                    const rawValue = e.target.value.replace(/,/g, "");
+                    if (!isNaN(Number(rawValue))) {
+                      const simulatedEvent = {
+                        ...e,
                         target: {
+                          ...e.target,
                           name: "companyValuation",
-                          value: Number(rawValue),
+                          value: rawValue, // Se mantiene como string
                         },
-                      });
+                      };
+                      handleInputChange(simulatedEvent);
                     }
                   }}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -429,15 +433,17 @@ function App() {
                   name="fundingNeeded"
                   value={inputs.fundingNeeded.toLocaleString("en-US")} // Formatea con puntos de miles
                   onChange={(e) => {
-                    // Elimina puntos y valida si es un número válido
-                    const rawValue = e.target.value.replace(/\,/g, "");
-                    if (!isNaN(rawValue)) {
-                      handleInputChange({
+                    const rawValue = e.target.value.replace(/,/g, "");
+                    if (!isNaN(Number(rawValue))) {
+                      const simulatedEvent = {
+                        ...e,
                         target: {
-                          name: "fundingNeeded",
-                          value: Number(rawValue),
+                          ...e.target,
+                          name: "companyValuation",
+                          value: rawValue, // Se mantiene como string
                         },
-                      });
+                      };
+                      handleInputChange(simulatedEvent);
                     }
                   }}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -651,14 +657,17 @@ function App() {
                 name="exitMultiple"
                 value={inputs.exitMultiple.toLocaleString("en-US")} // Formatea con puntos para miles
                 onChange={(e) => {
-                  const value = e.target.value.replace(/\,/g, ""); // Elimina los puntos para mantener el valor numérico
-                  if (!isNaN(value)) {
-                    handleInputChange({
+                  const rawValue = e.target.value.replace(/,/g, "");
+                  if (!isNaN(Number(rawValue))) {
+                    const simulatedEvent = {
+                      ...e,
                       target: {
-                        name: "exitMultiple",
-                        value: Number(value),
+                        ...e.target,
+                        name: "companyValuation",
+                        value: rawValue, // Se mantiene como string
                       },
-                    });
+                    };
+                    handleInputChange(simulatedEvent);
                   }
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -714,7 +723,7 @@ function App() {
                     const lines = payload.value.split("\n");
                     return (
                       <text x={x} y={y + 10} textAnchor="middle" fill="#666">
-                        {lines.map((line, index) => (
+                        {lines.map((line: any, index: number) => (
                           <tspan key={index} x={x} dy={index === 0 ? 0 : 14}>
                             {line}
                           </tspan>
@@ -723,7 +732,10 @@ function App() {
                     );
                   }}
                 />
-                <YAxis hide={true} domain={[0, (dataMax) => dataMax * 1.2]} />
+                <YAxis
+                  hide={true}
+                  domain={[0, (dataMax: any) => dataMax * 1.2]}
+                />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
@@ -745,12 +757,11 @@ function App() {
                       (item) => item.name === name
                     );
 
-                    const value = payload[0].value;
+                    const value = payload?.[0]?.value ?? 0; // Asumimos 0 si es undefined
 
-                    // Formato adecuado según si es porcentaje o valor monetario
                     const formattedValue = isPercentageData
-                      ? `${(value / 10000000) * 100}%` // Convertimos a porcentaje para mostrar
-                      : formatCurrency(value);
+                      ? `${(Number(value) / 10000000) * 100}%`
+                      : formatCurrency(Number(value));
 
                     return (
                       <div
@@ -855,7 +866,7 @@ function App() {
                     const lines = payload.value.split("\n");
                     return (
                       <text x={x} y={y + 10} textAnchor="middle" fill="#666">
-                        {lines.map((line, index) => (
+                        {lines.map((line: any, index: number) => (
                           <tspan key={index} x={x} dy={index === 0 ? 0 : 14}>
                             {line}
                           </tspan>
@@ -864,7 +875,10 @@ function App() {
                     );
                   }}
                 />
-                <YAxis hide={true} domain={[0, (dataMax) => dataMax * 1.2]} />
+                <YAxis
+                  hide={true}
+                  domain={[0, (dataMax: any) => dataMax * 1.2]}
+                />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
@@ -884,11 +898,11 @@ function App() {
                     const isPercentageData = barra3.some(
                       (item) => item.name === name
                     );
-                    const value = payload[0].value;
+                    const value = payload?.[0]?.value ?? 0; // Asumimos 0 si es undefined
 
                     const formattedValue = isPercentageData
-                      ? `${(value / 10000000) * 100}%` // Mostrar como porcentaje basado en 10 millones
-                      : formatCurrency(value);
+                      ? `${(Number(value) / 10000000) * 100}%`
+                      : formatCurrency(Number(value));
 
                     return (
                       <div

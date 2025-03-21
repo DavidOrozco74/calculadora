@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './style.css';
 
-const BubbleComponent = ({ value, exitMultiple }) => {
+const BubbleComponent = ({ value, exitMultiple }: any) => {
   const [isHovered, setIsHovered] = useState(false);
   const [bubbleSize, setBubbleSize] = useState(200);
 
