@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  BarChart,
+  XAxis,
+  YAxis,
+  Bar,
+} from "recharts";
+import BubbleComponent from "./components/bubbleGrafic";
 
 type PieDataType = {
   current: { name: string; value: number }[];
@@ -19,8 +30,8 @@ function App() {
     ventureDebtInterestRate: 12,
     ventureDebtTerm: 36,
     warrantCoverage: 10,
-    exitMultiple: 3,
-    exitTimeframe: 4,
+    exitMultiple: 30000000,
+    // exitTimeframe: 4,
     showHybridOption: false,
   });
 
@@ -83,16 +94,20 @@ function App() {
   useEffect(() => {
     // Calculate funding amounts for each source
     const vcAmount = inputs.fundingNeeded * (inputs.vcPercentage / 100);
+    console.log("inputs.fundingNeeded", inputs.fundingNeeded);
+    console.log("inputs.vcPercentage", inputs.vcPercentage);
     const debtAmount =
       inputs.fundingNeeded * (inputs.ventureDebtPercentage / 100);
 
     // Calculate VC dilution
     const vcSharesIssued =
       inputs.fundingNeeded / (inputs.companyValuation / 100);
+
     const vcDilution = vcSharesIssued;
     const vcNewOwnership = (inputs.founderOwnership * (100 - vcDilution)) / 100;
     const vcOtherInvestorsNewOwnership =
       (inputs.otherInvestorsOwnership * (100 - vcDilution)) / 100;
+
     const vcNewInvestorOwnership =
       100 - vcNewOwnership - vcOtherInvestorsNewOwnership;
 
@@ -128,22 +143,27 @@ function App() {
         Math.pow(1 + monthlyRate, inputs.ventureDebtTerm)) /
       (Math.pow(1 + monthlyRate, inputs.ventureDebtTerm) - 1);
     //operacion totalInterestPayments
+
+    //Total Cost of Debt (Full Debt)
     const totalInterestPayments =
-      fullDebtMonthlyPayment * inputs.ventureDebtTerm - inputs.fundingNeeded;
+      fullDebtMonthlyPayment * inputs.ventureDebtTerm;
 
     const blendDebtMonthlyPayment =
       (debtAmount *
         monthlyRate *
         Math.pow(1 + monthlyRate, inputs.ventureDebtTerm)) /
       (Math.pow(1 + monthlyRate, inputs.ventureDebtTerm) - 1);
+    //  Total Cost of Debt (Blend)
     const blendInterestPayments =
-      blendDebtMonthlyPayment * inputs.ventureDebtTerm - debtAmount;
+      blendDebtMonthlyPayment * inputs.ventureDebtTerm;
 
     // Calculate exit values
-    const exitValuation = inputs.companyValuation * inputs.exitMultiple;
+    const exitValuation = inputs.exitMultiple;
     const vcExitValue = (vcNewOwnership / 100) * exitValuation;
-    const debtExitValue = (debtNewOwnership / 100) * exitValuation;
-    const blendExitValue = (blendNewOwnership / 100) * exitValuation;
+    const debtExitValue =
+      (debtNewOwnership / 100) * (exitValuation - totalInterestPayments);
+    const blendExitValue =
+      (blendNewOwnership / 100) * (exitValuation - blendInterestPayments);
 
     setResults({
       vcDilution: Number(vcDilution.toFixed(2)),
@@ -220,10 +240,17 @@ function App() {
     payload?: any[];
   }) => {
     if (active && payload && payload.length) {
+      const isPercentage =
+        payload[0].name === "Founder Ownership Post-Dilution";
+
       return (
         <div className="bg-white p-2 border rounded shadow text-xs">
           <p className="font-medium">{payload[0].name}</p>
-          <p>{`${payload[0].value.toFixed(2)}%`}</p>
+          {isPercentage ? (
+            <p>{`${payload[0].value.toFixed(1)}%`}</p>
+          ) : (
+            <p>{formatCurrency(payload[0].value)}</p>
+          )}
         </div>
       );
     }
@@ -239,6 +266,67 @@ function App() {
       maximumFractionDigits: 0,
     }).format(value);
   };
+
+  // grafico de barras 1
+  const currencyData1 = [
+    {
+      name: "Valuation\nUpon Exit",
+      value: inputs.exitMultiple,
+    },
+  ];
+
+  const simboly1 = [
+    { name: "x", value: 0, type: "symbol" }, // Símbolo de multiplicación
+  ];
+
+  const simboly2 = [
+    { name: "=", value: 0, type: "symbol" }, // Símbolo igual
+  ];
+
+  const percentageData = [
+    {
+      name: `Founder Ownership\nPost-Dilution`,
+      value: results.vcNewOwnership, // Asegúrate que este sea el valor porcentual
+    },
+  ];
+
+  const currencyData2 = [
+    {
+      name: "Founder Profit at Exit\nWith Venture Capital",
+      value: results.vcExitValue,
+    },
+  ];
+
+  // grafico de barras 2
+
+  const barra1 = [
+    {
+      name: "Valuation\nUpon Exit",
+      value: inputs.exitMultiple,
+    },
+  ];
+
+  const iconResta = [{ name: "-", value: 0, type: "symbol" }];
+
+  const barra2 = [
+    { name: "Total Cost\nof Debt", value: results.totalInterestPayments },
+  ];
+
+  const barra3 = [
+    {
+      name: `Founder Ownership`,
+      value: results.debtNewOwnership,
+    },
+  ];
+
+  const barra4 = [
+    {
+      name: "Founder Profit\nwith Debt",
+      value: results.debtExitValue,
+    },
+  ];
+
+  const valorGlobo = (results.exitValueDifference / 1000000).toFixed(1);
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-100  shadow-md space-y-6">
@@ -261,17 +349,28 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
-                Current Valuation
+                Next Round Valuation
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
                   $
                 </span>
                 <input
-                  type="number"
+                  type="text"
                   name="companyValuation"
-                  value={inputs.companyValuation}
-                  onChange={handleInputChange}
+                  value={inputs.companyValuation.toLocaleString("en-US")} // Formato con puntos
+                  onChange={(e) => {
+                    // Elimina puntos y valida el valor numérico
+                    const rawValue = e.target.value.replace(/\,/g, "");
+                    if (!isNaN(rawValue)) {
+                      handleInputChange({
+                        target: {
+                          name: "companyValuation",
+                          value: Number(rawValue),
+                        },
+                      });
+                    }
+                  }}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
@@ -326,10 +425,21 @@ function App() {
                   $
                 </span>
                 <input
-                  type="number"
+                  type="text"
                   name="fundingNeeded"
-                  value={inputs.fundingNeeded}
-                  onChange={handleInputChange}
+                  value={inputs.fundingNeeded.toLocaleString("en-US")} // Formatea con puntos de miles
+                  onChange={(e) => {
+                    // Elimina puntos y valida si es un número válido
+                    const rawValue = e.target.value.replace(/\,/g, "");
+                    if (!isNaN(rawValue)) {
+                      handleInputChange({
+                        target: {
+                          name: "fundingNeeded",
+                          value: Number(rawValue),
+                        },
+                      });
+                    }
+                  }}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
@@ -461,10 +571,9 @@ function App() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Interest Rate */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
-                Interest Rate
+                Total Debt Cost of Capital
               </label>
               <div className="relative">
                 <input
@@ -535,37 +644,322 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
-                Exit Valuation Multiple
+                Exit Valuation
               </label>
               <input
-                type="number"
+                type="text"
                 name="exitMultiple"
-                value={inputs.exitMultiple}
-                onChange={handleInputChange}
+                value={inputs.exitMultiple.toLocaleString("en-US")} // Formatea con puntos para miles
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\,/g, ""); // Elimina los puntos para mantener el valor numérico
+                  if (!isNaN(value)) {
+                    handleInputChange({
+                      target: {
+                        name: "exitMultiple",
+                        value: Number(value),
+                      },
+                    });
+                  }
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 min="1"
                 step="0.5"
               />
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-black">
-                Exit Timeframe
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  name="exitTimeframe"
-                  value={inputs.exitTimeframe}
-                  onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  min="1"
+      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md col-span-2">
+        <h2 className="text-base md:text-lg font-semibold mb-4 md:mb-6 text-center text-blue-600 border-b border-gray-200 pb-2">
+          Founder Profit at Exit Valuation
+        </h2>
+
+        {/* Primera sección - Profit Difference */}
+        <div className="flex flex-col items-center bg-gray-100 p-3 md:p-4 mb-4 rounded-lg w-full">
+          <h3 className="text-sm md:text-lg font-bold mb-2 text-black text-center">
+            Excess Founder Profit at Exit with Debt versus Venture Capital
+          </h3>
+          <div className="w-full flex justify-center overflow-visible">
+            <BubbleComponent
+              value={`${valorGlobo}M`}
+              exitMultiple={inputs.exitMultiple}
+            />
+          </div>
+        </div>
+
+        {/* Segunda sección - Primer gráfico */}
+        <div className="flex flex-col items-center bg-gray-100 p-3 md:p-4 mb-4 rounded-lg w-full">
+          <h3 className="text-sm md:text-lg font-bold mb-2 text-black text-center">
+            Founder Profit at Exit with Venture Capital
+          </h3>
+          <div className="w-full h-64 md:h-72 lg:h-96 relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  ...currencyData1,
+                  ...simboly1,
+                  ...percentageData.map((item) => ({
+                    ...item,
+                    value: (item.value / 100) * 10000000, // Escalamos el porcentaje a rango de dinero
+                  })),
+                  ...simboly2,
+                  ...currencyData2,
+                ]}
+                margin={{ top: 0, right: 0, left: 0, bottom: 30 }}
+              >
+                <XAxis
+                  dataKey="name"
+                  tick={({ x, y, payload }) => {
+                    const lines = payload.value.split("\n");
+                    return (
+                      <text x={x} y={y + 10} textAnchor="middle" fill="#666">
+                        {lines.map((line, index) => (
+                          <tspan key={index} x={x} dy={index === 0 ? 0 : 14}>
+                            {line}
+                          </tspan>
+                        ))}
+                      </text>
+                    );
+                  }}
                 />
-                <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 text-sm">
-                  yrs
-                </span>
-              </div>
-            </div>
+                <YAxis hide={true} domain={[0, (dataMax) => dataMax * 1.2]} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || !payload.length) return null;
+
+                    const name = payload[0].payload.name;
+
+                    // Verifica si el nombre pertenece a simboly1 o simboly2
+                    const isDisabledData =
+                      simboly1.some((item) => item.name === name) ||
+                      simboly2.some((item) => item.name === name) ||
+                      percentageData.some((item) => item.name === name);
+
+                    if (isDisabledData) {
+                      return null;
+                    }
+
+                    // Verifica si es percentageData para mostrar porcentaje en el tooltip
+                    const isPercentageData = percentageData.some(
+                      (item) => item.name === name
+                    );
+
+                    const value = payload[0].value;
+
+                    // Formato adecuado según si es porcentaje o valor monetario
+                    const formattedValue = isPercentageData
+                      ? `${(value / 10000000) * 100}%` // Convertimos a porcentaje para mostrar
+                      : formatCurrency(value);
+
+                    return (
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          padding: "10px",
+                          border: "1px solid #ccc",
+                          fontSize: 14,
+                        }}
+                      >
+                        <p>{name}</p>
+                        <p>{formattedValue}</p>
+                      </div>
+                    );
+                  }}
+                />
+                <Bar
+                  dataKey="value"
+                  fill={"#0057FF"}
+                  stroke="none"
+                  barSize={100}
+                  label={(props) => {
+                    const { x, y, width, value, name } = props;
+
+                    // Verifica si es un símbolo y no debe mostrar una barra
+                    const isSymbol =
+                      simboly1.some((item) => item.name === name) ||
+                      simboly2.some((item) => item.name === name);
+
+                    if (isSymbol) {
+                      const adjustedY = y - 20;
+                      const adjustedX = x + width / 2;
+
+                      return (
+                        <text
+                          x={adjustedX}
+                          y={adjustedY}
+                          fill="#888888"
+                          textAnchor="middle"
+                          fontSize={40}
+                          fontWeight="bold"
+                        >
+                          {name}
+                        </text>
+                      );
+                    }
+
+                    // Verifica si es percentageData para mostrar porcentaje en la etiqueta de la barra
+                    const isPercentage = percentageData.some(
+                      (item) => item.name === name
+                    );
+
+                    const displayValue = isPercentage
+                      ? `${(value / 10000000) * 100}%`
+                      : formatCurrency(value);
+
+                    return (
+                      <text
+                        x={x + width / 2}
+                        y={y - 10}
+                        fill="#333"
+                        textAnchor="middle"
+                        fontSize={15}
+                        fontWeight="bold"
+                      >
+                        {displayValue}
+                      </text>
+                    );
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Tercera sección - Segundo gráfico */}
+        <div className="flex flex-col items-center bg-gray-100 p-3 md:p-4 mb-4 rounded-lg w-full">
+          <h3 className="text-sm md:text-lg font-bold mb-2 text-black text-center">
+            Founder Profit at Exit with Debt
+          </h3>
+
+          <div className="w-full h-64 md:h-72 lg:h-96 relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  ...barra1,
+                  ...iconResta,
+                  ...barra2,
+                  ...simboly1,
+                  ...barra3.map((item) => ({
+                    ...item,
+                    value: (item.value / 100) * 10000000, // Escalamos el porcentaje a rango de dinero
+                  })),
+                  ...simboly2,
+                  ...barra4,
+                ]}
+                margin={{ top: 0, right: 30, left: 0, bottom: 30 }}
+              >
+                <XAxis
+                  dataKey="name"
+                  tick={({ x, y, payload }) => {
+                    const lines = payload.value.split("\n");
+                    return (
+                      <text x={x} y={y + 10} textAnchor="middle" fill="#666">
+                        {lines.map((line, index) => (
+                          <tspan key={index} x={x} dy={index === 0 ? 0 : 14}>
+                            {line}
+                          </tspan>
+                        ))}
+                      </text>
+                    );
+                  }}
+                />
+                <YAxis hide={true} domain={[0, (dataMax) => dataMax * 1.2]} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || !payload.length) return null;
+
+                    const name = payload[0].payload.name;
+
+                    // Verifica si es un símbolo o parte de barra3 (desactivamos tooltip para ellos)
+                    const isDisabledData =
+                      simboly1.some((item) => item.name === name) ||
+                      iconResta.some((item) => item.name === name) ||
+                      simboly2.some((item) => item.name === name) ||
+                      barra3.some((item) => item.name === name);
+
+                    if (isDisabledData) return null;
+
+                    // Verifica si es un dato de barra3 para mostrar porcentaje
+                    const isPercentageData = barra3.some(
+                      (item) => item.name === name
+                    );
+                    const value = payload[0].value;
+
+                    const formattedValue = isPercentageData
+                      ? `${(value / 10000000) * 100}%` // Mostrar como porcentaje basado en 10 millones
+                      : formatCurrency(value);
+
+                    return (
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          padding: "10px",
+                          border: "1px solid #ccc",
+                          fontSize: 14,
+                        }}
+                      >
+                        <p>{name}</p>
+                        <p>{formattedValue}</p>
+                      </div>
+                    );
+                  }}
+                />
+                <Bar
+                  dataKey="value"
+                  fill={"#0057FF"}
+                  stroke="none"
+                  label={(props) => {
+                    const { x, y, width, value, name } = props;
+
+                    // Verificar si es un símbolo y no debe mostrar barra
+                    const isSymbol =
+                      simboly1.some((item) => item.name === name) ||
+                      iconResta.some((item) => item.name === name) ||
+                      simboly2.some((item) => item.name === name);
+
+                    if (isSymbol) {
+                      const adjustedY = y - 20;
+                      const adjustedX = x + width / 2;
+
+                      return (
+                        <text
+                          x={adjustedX}
+                          y={adjustedY}
+                          fill="#888888"
+                          textAnchor="middle"
+                          fontSize={40}
+                          fontWeight="bold"
+                        >
+                          {name}
+                        </text>
+                      );
+                    }
+
+                    // Mostrar porcentaje para barra3
+                    const isPercentage = barra3.some(
+                      (item) => item.name === name
+                    );
+                    const displayValue = isPercentage
+                      ? `${(value / 10000000) * 100}%`
+                      : formatCurrency(value);
+
+                    return (
+                      <text
+                        x={x + width / 2}
+                        y={y - 10}
+                        fill="#333"
+                        textAnchor="middle"
+                        fontSize={15}
+                        fontWeight="bold"
+                      >
+                        {displayValue}
+                      </text>
+                    );
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
@@ -733,14 +1127,14 @@ function App() {
             </h3>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm">
                   Founder Ownership with Venture Capital:
                 </span>
                 <span className="font-semibold">{results.vcNewOwnership}%</span>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm">Founder Ownership with Debt:</span>
                 <span className="font-semibold">
                   {results.debtNewOwnership}%
@@ -748,7 +1142,7 @@ function App() {
               </div>
 
               {inputs.showHybridOption && (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">Founder Ownership with Blend:</span>
                   <span className="font-semibold">
                     {results.blendNewOwnership}%
@@ -756,7 +1150,7 @@ function App() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-[#608df7]">
+              <div className="flex items-center justify-between text-[#608df7] mb-1">
                 <span className="text-sm">Equity Preserved with Debt:</span>
                 <span className="font-semibold">
                   +{results.ownershipDifference}%
@@ -766,7 +1160,7 @@ function App() {
               <div className="pt-2 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">
-                    Founder Value at Exit (Venture Capital):
+                    Founder Profit at Exit with Venture Capital:
                   </span>
                   <span className="font-semibold">
                     {formatCurrency(results.vcExitValue)}
@@ -774,7 +1168,7 @@ function App() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Founder Value at Exit (Debt):</span>
+                  <span className="text-sm">Founder Profit with Debt:</span>
                   <span className="font-semibold">
                     {formatCurrency(results.debtExitValue)}
                   </span>
@@ -782,41 +1176,42 @@ function App() {
 
                 {inputs.showHybridOption && (
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">
-                      Founder Value at Exit (Blend):
-                    </span>
+                    <span className="text-sm">Founder Profit with Blend:</span>
                     <span className="font-semibold">
                       {formatCurrency(results.blendExitValue)}
                     </span>
                   </div>
                 )}
-
-                <div className="flex items-center justify-between text-[#608df7]">
-                  <span className="text-sm">
-                    Additional Exit Value (Debt vs Venture Capital):
-                  </span>
-                  <span className="font-semibold">
-                    +{formatCurrency(results.exitValueDifference)}
-                  </span>
-                </div>
               </div>
 
               <div className="pt-2 border-t border-gray-200">
                 <div className="flex items-center justify-between font-semibold">
-                  <span className="text-sm">Total Interest (100% Debt):</span>
+                  <span className="text-sm">
+                    Total Cost of Debt (Full Debt):
+                  </span>
                   <span className="font-semibold">
                     {formatCurrency(results.totalInterestPayments)}
                   </span>
                 </div>
 
-                {inputs.showHybridOption && (
+                {/* {inputs.showHybridOption && (
                   <div className="flex items-center justify-between font-semibold">
-                    <span className="text-sm">Total Interest (Blend):</span>
+                    <span className="text-sm">Total interest (Blend):</span>
                     <span className="font-semibold">
                       {formatCurrency(results.blendInterestPayments)}
                     </span>
                   </div>
-                )}
+                )} */}
+
+                <div className="flex items-center justify-between text-[#608df7]">
+                  <span className="text-sm">
+                    Estimated Excess Profit to Founder with Venture Debt vs.
+                    Equity:
+                  </span>
+                  <span className="font-semibold">
+                    +{formatCurrency(results.exitValueDifference)}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -839,7 +1234,7 @@ function App() {
                     <span className="font-semibold">
                       {formatCurrency(results.exitValueDifference)}
                     </span>{" "}
-                    more value at exit.
+                    more net value at exit.
                   </span>
                 </li>
               ) : (
@@ -863,7 +1258,7 @@ function App() {
 
               {inputs.showHybridOption && (
                 <li className="flex items-start">
-                  <span className="text[#000000] mr-2">■</span>
+                  <span className="text-[#0057FF] mr-2">■</span>
                   <span>
                     The blended approach allows you to balance equity
                     preservation and cash flow needs.
@@ -874,10 +1269,10 @@ function App() {
               {(results.totalInterestPayments ?? 0) <
               (results.exitValueDifference ?? 0) ? (
                 <li className="flex items-start">
-                  <span className="text-[#0057FF] mr-2">■</span>
+                  <span className="text-[#608df7] mr-2">■</span>
                   <span>
-                    Interest payments of{" "}
-                    {formatCurrency(results.totalInterestPayments)} are lower
+                    Total cost of deb{" "}
+                    {formatCurrency(results.totalInterestPayments)} is lower
                     than the additional exit value of{" "}
                     {formatCurrency(results.exitValueDifference)}, making debt
                     financially advantageous.
@@ -885,21 +1280,21 @@ function App() {
                 </li>
               ) : (
                 <li className="flex items-start">
-                  <span className="text-yellow-500 mr-2">●</span>
+                  <span className="text-[#608df7] mr-2">■</span>
                   <span>
-                    Interest payments of{" "}
+                    Total cost of deb{" "}
                     {formatCurrency(results.totalInterestPayments)} may offset
                     some of the equity preservation benefits.
                   </span>
                 </li>
               )}
 
-              <li className="flex items-start">
-                <span className="text-[#608df7] mr-2">■</span>
+              <li className="flex items-start ">
+                <span className="text-[#0057FF] mr-2">■</span>
                 <span>Venture debt is ideally suited for companies with:</span>
               </li>
 
-              <ul className="ml-6 space-y-2">
+              <ul className="ml-6 space-y-2 border-b border-gray-200 pb-2">
                 <li className="flex items-start">
                   <span className="text-gray-500 mr-2">○</span>
                   <span>
@@ -915,13 +1310,30 @@ function App() {
                   <span>Founders who prioritize ownership retention</span>
                 </li>
               </ul>
-
-              <li className="flex items-start pt-2 border-t border-gray-200">
+              <li className="flex items-start pt-2">
                 <span className="text-[#000000] mr-2">■</span>
                 <span>
                   {inputs.showHybridOption
                     ? "The optimal blend of VC and venture debt depends on your company's cash needs, growth trajectory, and equity goals."
                     : "Consider a hybrid approach: smaller equity round plus venture debt to optimize capital structure."}
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#000000] mr-2">■</span>
+                <span>
+                  Note: Warrant coverage means the lender gets the right to
+                  purchase shares equal to X% of the loan amount at a
+                  predetermined price, typically based on the company's latest
+                  valuation. For example, on a $10M loan with 10% warrant
+                  coverage, the lender would receive warrants to buy $1M worth
+                  of equity today at the agreed price.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#000000] mr-2">■</span>
+                <span>
+                  Note: Assumes X months of amortization. Where X links to the
+                  input Term (Months) which is 36 in our example.
                 </span>
               </li>
             </ul>
