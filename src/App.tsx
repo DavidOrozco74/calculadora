@@ -12,8 +12,6 @@ import {
 } from "recharts";
 import BubbleComponent from "./components/bubbleGrafic";
 
-
-
 type PieDataType = {
   current: { name: string; value: number }[];
   vc: { name: string; value: number }[];
@@ -358,25 +356,13 @@ function App() {
                   $
                 </span>
                 <input
-                  type="text"
+                  type="number"
                   name="companyValuation"
-                  value={inputs.companyValuation.toLocaleString("en-US")} // Formato con puntos
-                  onChange={(e) => {
-                    const rawValue = e.target.value.replace(/,/g, "");
-                    if (!isNaN(Number(rawValue))) {
-                      const simulatedEvent = {
-                        ...e,
-                        target: {
-                          ...e.target,
-                          name: "companyValuation",
-                          value: rawValue, // Se mantiene como string
-                        },
-                      };
-                      handleInputChange(simulatedEvent);
-                    }
-                  }}
+                  value={inputs.companyValuation}
+                  onChange={handleInputChange}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
+                
               </div>
             </div>
 
@@ -429,23 +415,10 @@ function App() {
                   $
                 </span>
                 <input
-                  type="text"
+                  type="number"
                   name="fundingNeeded"
-                  value={inputs.fundingNeeded.toLocaleString("en-US")} // Formatea con puntos de miles
-                  onChange={(e) => {
-                    const rawValue = e.target.value.replace(/,/g, "");
-                    if (!isNaN(Number(rawValue))) {
-                      const simulatedEvent = {
-                        ...e,
-                        target: {
-                          ...e.target,
-                          name: "companyValuation",
-                          value: rawValue, // Se mantiene como string
-                        },
-                      };
-                      handleInputChange(simulatedEvent);
-                    }
-                  }}
+                  value={inputs.fundingNeeded}
+                  onChange={handleInputChange}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
@@ -653,23 +626,10 @@ function App() {
                 Exit Valuation
               </label>
               <input
-                type="text"
+                type="number"
                 name="exitMultiple"
-                value={inputs.exitMultiple.toLocaleString("en-US")} // Formatea con puntos para miles
-                onChange={(e) => {
-                  const rawValue = e.target.value.replace(/,/g, "");
-                  if (!isNaN(Number(rawValue))) {
-                    const simulatedEvent = {
-                      ...e,
-                      target: {
-                        ...e.target,
-                        name: "companyValuation",
-                        value: rawValue, // Se mantiene como string
-                      },
-                    };
-                    handleInputChange(simulatedEvent);
-                  }
-                }}
+                value={inputs.exitMultiple}
+                onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 min="1"
                 step="0.5"
