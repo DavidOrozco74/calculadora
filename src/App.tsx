@@ -231,7 +231,7 @@ function App() {
       ],
     });
   }, [inputs]);
-  
+
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -666,7 +666,7 @@ function App() {
                               textAnchor="middle"
                               fill="#666"
                             >
-                              {lines.map((line : string, index : number) => (
+                              {lines.map((line: string, index: number) => (
                                 <tspan
                                   key={index}
                                   x={x}
@@ -680,7 +680,10 @@ function App() {
                         }
                   }
                 />
-                <YAxis hide={true} domain={[0, (dataMax: number) => dataMax * 1.2]} />
+                <YAxis
+                  hide={true}
+                  domain={[0, (dataMax: number) => dataMax * 1.2]}
+                />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
@@ -814,7 +817,7 @@ function App() {
                               textAnchor="middle"
                               fill="#666"
                             >
-                              {lines.map((line : string, index : number) => (
+                              {lines.map((line: string, index: number) => (
                                 <tspan
                                   key={index}
                                   x={x}
@@ -829,7 +832,7 @@ function App() {
                   }
                 />
 
-                <YAxis hide domain={[0, (dataMax : number) => dataMax * 1.2]} />
+                <YAxis hide domain={[0, (dataMax: number) => dataMax * 1.2]} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
@@ -868,7 +871,7 @@ function App() {
                   name="value"
                   isAnimationActive={true}
                   // Esta es la parte nueva que agrega fill específico por barra
-                  shape={(props : any) => {
+                  shape={(props: any) => {
                     const { x, y, width, height, payload } = props;
                     // Verificar si el dato pertenece a barra2
                     const isBarra2 = barra2.some(
@@ -898,17 +901,15 @@ function App() {
                       payload?.isPercentage ||
                       barra3.some((item) => item.name === name);
 
-                    
-
                     if (isPercentage) {
                       return (
                         <text
-                        x={x + width / 2}
-                        y={y - 20}
-                        fill="#888888"
-                        textAnchor="middle"
-                        fontSize="clamp(15px, 2vw, 16px)"
-                        fontWeight="bold"
+                          x={x + width / 2}
+                          y={y - 20}
+                          fill="#888888"
+                          textAnchor="middle"
+                          fontSize="clamp(15px, 2vw, 16px)"
+                          fontWeight="bold"
                         >
                           {`${value}%`}
                         </text>
@@ -918,12 +919,12 @@ function App() {
                     if (isSymbol) {
                       return (
                         <text
-                        x={x + width / 2}
-                        y={y - 20}
-                        fill="#888888"
-                        textAnchor="middle"
-                        fontSize="clamp(40px, 3vw, 20px)"
-                        fontWeight="bold"
+                          x={x + width / 2}
+                          y={y - 20}
+                          fill="#888888"
+                          textAnchor="middle"
+                          fontSize="clamp(40px, 3vw, 20px)"
+                          fontWeight="bold"
                         >
                           {name}
                         </text>
@@ -932,7 +933,7 @@ function App() {
 
                     return (
                       <text
-                      x={x + width / 2}
+                        x={x + width / 2}
                         y={y - 10}
                         fill="#333"
                         textAnchor="middle"
@@ -1187,23 +1188,44 @@ function App() {
                       />
                     ))}
                   </Pie>
+                  Solución concisa para formatear valores decimales
                   <Legend
                     layout="horizontal"
                     verticalAlign="bottom"
                     align="center"
-                    formatter={(value, entry) => (
-                      <span
-                        style={{
-                          color: entry.color,
-                          fontWeight: "bold",
-                          padding: "0 4px",
-                          display: "inline-block",
-                          fontSize: "16px",
-                        }}
-                      >
-                        {value}: {entry?.payload?.value.toFixed(1)}%
-                      </span>
-                    )}
+                    formatter={(value, entry) => {
+                      // Convertir el string a número
+                      const numValue = parseFloat(entry?.payload?.value);
+
+                      // Formatear el valor solo si es un número válido
+                      let formattedValue;
+                      if (!isNaN(numValue)) {
+                        // Verificar si es un entero después de convertirlo a número
+                        formattedValue = Number.isInteger(numValue)
+                          ? numValue
+                          : numValue.toFixed(1);
+
+                          console.log(formattedValue);
+
+                      } else {
+                        // Si no se puede convertir a número, mostrar el valor original
+                        formattedValue = entry.value || "0";
+                      }
+
+                      return (
+                        <span
+                          style={{
+                            color: entry.color,
+                            fontWeight: "bold",
+                            padding: "0 4px",
+                            display: "inline-block",
+                            fontSize: "16px",
+                          }}
+                        >
+                          {value}: {formattedValue}%
+                        </span>
+                      );
+                    }}
                     wrapperStyle={{
                       bottom: 0,
                       fontSize: "12px",
