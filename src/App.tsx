@@ -436,7 +436,7 @@ function App() {
               <div className="mt-4 space-y-4">
                 <div className="flex items-center space-x-2">
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-medium text-black">
                       Venture Capital %
                     </label>
                     <div className="relative">
