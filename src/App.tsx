@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
   Bar,
+  Legend,
 } from "recharts";
 import BubbleComponent from "./components/bubbleGrafic";
 
@@ -94,8 +95,6 @@ function App() {
   useEffect(() => {
     // Calculate funding amounts for each source
     const vcAmount = inputs.fundingNeeded * (inputs.vcPercentage / 100);
-    console.log("inputs.fundingNeeded", inputs.fundingNeeded);
-    console.log("inputs.vcPercentage", inputs.vcPercentage);
     const debtAmount =
       inputs.fundingNeeded * (inputs.ventureDebtPercentage / 100);
 
@@ -166,34 +165,36 @@ function App() {
       (blendNewOwnership / 100) * (exitValuation - blendInterestPayments);
 
     setResults({
-      vcDilution: Number(vcDilution.toFixed(2)),
-      vcNewOwnership: Number(vcNewOwnership.toFixed(2)),
+      vcDilution: Number(vcDilution.toFixed(1)),
+      vcNewOwnership: Number(vcNewOwnership.toFixed(1)),
       vcOtherInvestorsNewOwnership: Number(
-        vcOtherInvestorsNewOwnership.toFixed(2)
+        vcOtherInvestorsNewOwnership.toFixed(1)
       ),
-      vcNewInvestorOwnership: Number(vcNewInvestorOwnership.toFixed(2)),
-      debtWarrantDilution: Number(warrantDilution.toFixed(2)),
-      debtNewOwnership: Number(debtNewOwnership.toFixed(2)),
+      vcNewInvestorOwnership: Number(vcNewInvestorOwnership.toFixed(1)),
+      debtWarrantDilution: Number(warrantDilution.toFixed(1)),
+      debtNewOwnership: Number(debtNewOwnership.toFixed(1)),
       debtOtherInvestorsNewOwnership: Number(
-        debtOtherInvestorsNewOwnership.toFixed(2)
+        debtOtherInvestorsNewOwnership.toFixed(1)
       ),
-      debtNewInvestorOwnership: Number(debtNewInvestorOwnership.toFixed(2)),
+      debtNewInvestorOwnership: Number(debtNewInvestorOwnership.toFixed(1)),
       ownershipDifference: Number(
-        (debtNewOwnership - vcNewOwnership).toFixed(2)
+        (debtNewOwnership - vcNewOwnership).toFixed(1)
       ),
       vcExitValue: Number(vcExitValue.toFixed(0)),
       debtExitValue: Number(debtExitValue.toFixed(0)),
       exitValueDifference: Number((debtExitValue - vcExitValue).toFixed(0)),
       totalInterestPayments: Number(totalInterestPayments.toFixed(0)),
-      blendDilution: Number(blendTotalDilution.toFixed(2)),
-      blendNewOwnership: Number(blendNewOwnership.toFixed(2)),
+      blendDilution: Number(blendTotalDilution.toFixed(1)),
+      blendNewOwnership: Number(blendNewOwnership.toFixed(1)),
       blendOtherInvestorsNewOwnership: Number(
-        blendOtherInvestorsNewOwnership.toFixed(2)
+        blendOtherInvestorsNewOwnership.toFixed(1)
       ),
-      blendNewInvestorOwnership: Number(blendNewInvestorOwnership.toFixed(2)),
+      blendNewInvestorOwnership: Number(blendNewInvestorOwnership.toFixed(1)),
       blendExitValue: Number(blendExitValue.toFixed(0)),
       blendInterestPayments: Number(blendInterestPayments.toFixed(0)),
     });
+
+    console.log(results.debtOtherInvestorsNewOwnership);
 
     setPieData({
       current: [
@@ -321,7 +322,7 @@ function App() {
 
   const barra4 = [
     {
-      name: "Founder Profit\nwith Debt",
+      name: "Founder Profit at Exit\nwith Debt",
       value: results.debtExitValue,
     },
   ];
@@ -360,9 +361,8 @@ function App() {
                   name="companyValuation"
                   value={inputs.companyValuation}
                   onChange={handleInputChange}
-                  className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
-                
               </div>
             </div>
 
@@ -376,7 +376,7 @@ function App() {
                   name="founderOwnership"
                   value={inputs.founderOwnership}
                   onChange={handleInputChange}
-                  className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   max="100"
                   min="0"
                 />
@@ -396,7 +396,7 @@ function App() {
                   name="otherInvestorsOwnership"
                   value={inputs.otherInvestorsOwnership}
                   disabled
-                  className="w-full pr-7 p-2 bg-gray-100 border border-gray-300 rounded-md"
+                  className="w-full pr-7 p-2 bg-gray-100 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   max="100"
                   min="0"
                 />
@@ -419,7 +419,7 @@ function App() {
                   name="fundingNeeded"
                   value={inputs.fundingNeeded}
                   onChange={handleInputChange}
-                  className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
             </div>
@@ -481,7 +481,7 @@ function App() {
                             ventureDebtPercentage: 100 - vcValue,
                           }));
                         }}
-                        className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         max="100"
                         min="0"
                       />
@@ -510,7 +510,7 @@ function App() {
                             vcPercentage: 100 - debtValue,
                           }));
                         }}
-                        className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         max="100"
                         min="0"
                       />
@@ -560,7 +560,7 @@ function App() {
                   name="ventureDebtInterestRate"
                   value={inputs.ventureDebtInterestRate}
                   onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   max="30"
                   min="0"
                   step="0.5"
@@ -582,7 +582,7 @@ function App() {
                   name="ventureDebtTerm"
                   value={inputs.ventureDebtTerm}
                   onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 text-sm">
                   mos
@@ -601,7 +601,7 @@ function App() {
                   name="warrantCoverage"
                   value={inputs.warrantCoverage}
                   onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   max="100"
                   min="0"
                   step="0.5"
@@ -630,7 +630,7 @@ function App() {
                 name="exitMultiple"
                 value={inputs.exitMultiple}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 min="1"
                 step="0.5"
               />
@@ -668,41 +668,50 @@ function App() {
                 data={[
                   ...currencyData1,
                   ...simboly1,
-                  ...percentageData.map((item) => ({
-                    ...item,
-                    value: (item.value / 100) * 10000000, // Escalamos el porcentaje a rango de dinero
-                  })),
+                  ...percentageData,
                   ...simboly2,
                   ...currencyData2,
                 ]}
-                margin={{ top: 0, right: 0, left: 0, bottom: 30 }}
+                margin={
+                  window.innerWidth < 768
+                    ? { top: 0, right: 20, left: 20, bottom: 30 } // Márgenes más amplias en móviles
+                    : { top: 0, right: 0, left: 0, bottom: 30 }
+                }
               >
                 <XAxis
                   dataKey="name"
-                  tick={({ x, y, payload }) => {
-                    const lines = payload.value.split("\n");
-                    return (
-                      <text x={x} y={y + 10} textAnchor="middle" fill="#666">
-                        {lines.map((line: any, index: number) => (
-                          <tspan key={index} x={x} dy={index === 0 ? 0 : 14}>
-                            {line}
-                          </tspan>
-                        ))}
-                      </text>
-                    );
-                  }}
+                  tick={
+                    window.innerWidth < 768
+                      ? false // Oculta etiquetas en móviles
+                      : ({ x, y, payload }) => {
+                          const lines = payload.value.split("\n");
+                          return (
+                            <text
+                              x={x}
+                              y={y + 10}
+                              textAnchor="middle"
+                              fill="#666"
+                            >
+                              {lines.map((line, index) => (
+                                <tspan
+                                  key={index}
+                                  x={x}
+                                  dy={index === 0 ? 0 : 14}
+                                >
+                                  {line}
+                                </tspan>
+                              ))}
+                            </text>
+                          );
+                        }
+                  }
                 />
-                <YAxis
-                  hide={true}
-                  domain={[0, (dataMax: any) => dataMax * 1.2]}
-                />
+                <YAxis hide={true} domain={[0, (dataMax) => dataMax * 1.2]} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
 
                     const name = payload[0].payload.name;
-
-                    // Verifica si el nombre pertenece a simboly1 o simboly2
                     const isDisabledData =
                       simboly1.some((item) => item.name === name) ||
                       simboly2.some((item) => item.name === name) ||
@@ -711,17 +720,6 @@ function App() {
                     if (isDisabledData) {
                       return null;
                     }
-
-                    // Verifica si es percentageData para mostrar porcentaje en el tooltip
-                    const isPercentageData = percentageData.some(
-                      (item) => item.name === name
-                    );
-
-                    const value = payload?.[0]?.value ?? 0; // Asumimos 0 si es undefined
-
-                    const formattedValue = isPercentageData
-                      ? `${(Number(value) / 10000000) * 100}%`
-                      : formatCurrency(Number(value));
 
                     return (
                       <div
@@ -733,50 +731,61 @@ function App() {
                         }}
                       >
                         <p>{name}</p>
-                        <p>{formattedValue}</p>
                       </div>
                     );
                   }}
                 />
                 <Bar
-                  dataKey="value"
+                  dataKey={(dataPoint) =>
+                    dataPoint && dataPoint.isPercentage
+                      ? 0
+                      : dataPoint?.value || 0
+                  }
                   fill={"#0057FF"}
                   stroke="none"
-                  barSize={100}
+                  barSize={window.innerWidth < 768 ? 50 : 100}
                   label={(props) => {
-                    const { x, y, width, value, name } = props;
+                    if (!props || !props.name) return <text />;
 
-                    // Verifica si es un símbolo y no debe mostrar una barra
+                    const { x, y, width, value, name, payload } = props;
+
                     const isSymbol =
                       simboly1.some((item) => item.name === name) ||
                       simboly2.some((item) => item.name === name);
 
-                    if (isSymbol) {
-                      const adjustedY = y - 20;
-                      const adjustedX = x + width / 2;
+                    const isPercentage =
+                      payload?.isPercentage ||
+                      percentageData.some((item) => item.name === name);
 
+                    if (isPercentage) {
                       return (
                         <text
-                          x={adjustedX}
-                          y={adjustedY}
+                          x={x + width / 2}
+                          y={y - 20}
                           fill="#888888"
                           textAnchor="middle"
-                          fontSize={40}
+                          fontSize="clamp(15px, 2vw, 16px)"
+                          fontWeight="bold"
+                        >
+                          {`${value}%`}
+                        </text>
+                      );
+                    }
+
+                    if (isSymbol) {
+                      return (
+                        <text
+                          x={x + width / 2}
+                          y={y - 20}
+                          fill="#888888"
+                          textAnchor="middle"
+                          fontSize="clamp(40px, 3vw, 20px)"
                           fontWeight="bold"
                         >
                           {name}
                         </text>
                       );
                     }
-
-                    // Verifica si es percentageData para mostrar porcentaje en la etiqueta de la barra
-                    const isPercentage = percentageData.some(
-                      (item) => item.name === name
-                    );
-
-                    const displayValue = isPercentage
-                      ? `${(value / 10000000) * 100}%`
-                      : formatCurrency(value);
 
                     return (
                       <text
@@ -787,7 +796,7 @@ function App() {
                         fontSize={15}
                         fontWeight="bold"
                       >
-                        {displayValue}
+                        {formatCurrency(value)}
                       </text>
                     );
                   }}
@@ -811,58 +820,54 @@ function App() {
                   ...iconResta,
                   ...barra2,
                   ...simboly1,
-                  ...barra3.map((item) => ({
-                    ...item,
-                    value: (item.value / 100) * 10000000, // Escalamos el porcentaje a rango de dinero
-                  })),
+                  ...barra3,
                   ...simboly2,
                   ...barra4,
                 ]}
-                margin={{ top: 0, right: 30, left: 0, bottom: 30 }}
+                margin={{ top: 20, right: 10, left: 10, bottom: 50 }}
               >
                 <XAxis
                   dataKey="name"
-                  tick={({ x, y, payload }) => {
-                    const lines = payload.value.split("\n");
-                    return (
-                      <text x={x} y={y + 10} textAnchor="middle" fill="#666">
-                        {lines.map((line: any, index: number) => (
-                          <tspan key={index} x={x} dy={index === 0 ? 0 : 14}>
-                            {line}
-                          </tspan>
-                        ))}
-                      </text>
-                    );
-                  }}
+                  tick={
+                    window.innerWidth < 768
+                      ? false // Oculta etiquetas en móviles
+                      : ({ x, y, payload }) => {
+                          const lines = payload.value.split("\n");
+                          return (
+                            <text
+                              x={x}
+                              y={y + 10}
+                              textAnchor="middle"
+                              fill="#666"
+                            >
+                              {lines.map((line, index) => (
+                                <tspan
+                                  key={index}
+                                  x={x}
+                                  dy={index === 0 ? 0 : 14}
+                                >
+                                  {line}
+                                </tspan>
+                              ))}
+                            </text>
+                          );
+                        }
+                  }
                 />
-                <YAxis
-                  hide={true}
-                  domain={[0, (dataMax: any) => dataMax * 1.2]}
-                />
+
+                <YAxis hide domain={[0, (dataMax) => dataMax * 1.2]} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
 
                     const name = payload[0].payload.name;
-
-                    // Verifica si es un símbolo o parte de barra3 (desactivamos tooltip para ellos)
                     const isDisabledData =
                       simboly1.some((item) => item.name === name) ||
-                      iconResta.some((item) => item.name === name) ||
                       simboly2.some((item) => item.name === name) ||
+                      iconResta.some((item) => item.name === name) ||
                       barra3.some((item) => item.name === name);
 
                     if (isDisabledData) return null;
-
-                    // Verifica si es un dato de barra3 para mostrar porcentaje
-                    const isPercentageData = barra3.some(
-                      (item) => item.name === name
-                    );
-                    const value = payload?.[0]?.value ?? 0; // Asumimos 0 si es undefined
-
-                    const formattedValue = isPercentageData
-                      ? `${(Number(value) / 10000000) * 100}%`
-                      : formatCurrency(Number(value));
 
                     return (
                       <div
@@ -874,35 +879,76 @@ function App() {
                         }}
                       >
                         <p>{name}</p>
-                        <p>{formattedValue}</p>
                       </div>
                     );
                   }}
                 />
                 <Bar
-                  dataKey="value"
-                  fill={"#0057FF"}
-                  stroke="none"
+                  dataKey={(dataPoint) =>
+                    dataPoint && dataPoint.isPercentage
+                      ? 0
+                      : dataPoint?.value || 0
+                  }
+                  fill="#0057FF"
+                  barSize={window.innerWidth < 768 ? 40 : 100}
+                  name="value"
+                  isAnimationActive={true}
+                  // Esta es la parte nueva que agrega fill específico por barra
+                  shape={(props) => {
+                    const { x, y, width, height, fill, name, payload } = props;
+                    // Verificar si el dato pertenece a barra2
+                    const isBarra2 = barra2.some(
+                      (item) => item.name === payload.name
+                    );
+                    const barColor = isBarra2 ? "#000000" : "#0057FF";
+                    return (
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={barColor}
+                      />
+                    );
+                  }}
                   label={(props) => {
-                    const { x, y, width, value, name } = props;
+                    if (!props || !props.name) return null;
+                    const { x, y, width, value, name, payload } = props;
 
-                    // Verificar si es un símbolo y no debe mostrar barra
                     const isSymbol =
                       simboly1.some((item) => item.name === name) ||
-                      iconResta.some((item) => item.name === name) ||
-                      simboly2.some((item) => item.name === name);
+                      simboly2.some((item) => item.name === name) ||
+                      iconResta.some((item) => item.name === name);
 
-                    if (isSymbol) {
-                      const adjustedY = y - 20;
-                      const adjustedX = x + width / 2;
+                    const isPercentage =
+                      payload?.isPercentage ||
+                      barra3.some((item) => item.name === name);
 
+                    const adjustedX = x + width / 2;
+
+                    if (isPercentage) {
                       return (
                         <text
                           x={adjustedX}
-                          y={adjustedY}
+                          y={y - 20}
                           fill="#888888"
                           textAnchor="middle"
-                          fontSize={40}
+                          fontSize="clamp(15px, 2vw, 16px)"
+                          fontWeight="bold"
+                        >
+                          {`${value}%`}
+                        </text>
+                      );
+                    }
+
+                    if (isSymbol) {
+                      return (
+                        <text
+                          x={adjustedX}
+                          y={y - 20}
+                          fill="#888888"
+                          textAnchor="middle"
+                          fontSize="clamp(40px, 3vw, 20px)"
                           fontWeight="bold"
                         >
                           {name}
@@ -910,24 +956,16 @@ function App() {
                       );
                     }
 
-                    // Mostrar porcentaje para barra3
-                    const isPercentage = barra3.some(
-                      (item) => item.name === name
-                    );
-                    const displayValue = isPercentage
-                      ? `${(value / 10000000) * 100}%`
-                      : formatCurrency(value);
-
                     return (
                       <text
-                        x={x + width / 2}
+                        x={adjustedX}
                         y={y - 10}
                         fill="#333"
                         textAnchor="middle"
-                        fontSize={15}
+                        fontSize="clamp(10px, 2vw, 14px)"
                         fontWeight="bold"
                       >
-                        {displayValue}
+                        {formatCurrency(value)}
                       </text>
                     );
                   }}
@@ -946,31 +984,56 @@ function App() {
           <h3 className="text-lg font-bold mb-2 text-black">
             Current Ownership
           </h3>
-          <div className="h-64 w-full max-w-2xl">
-            <ResponsiveContainer width="100%">
-              <PieChart>
+          <div className="w-full max-w-2xl">
+            <ResponsiveContainer width="100%" height={350}>
+              <PieChart margin={{ top: 100, right: 10, bottom: 70, left: 10 }}>
                 <Pie
                   data={pieData.current}
                   cx="50%"
-                  cy="50%"
+                  cy="40%"
                   innerRadius={70}
                   outerRadius={100}
                   paddingAngle={2}
                   dataKey="value"
-                  label={({ name, value }) =>
-                    value > 0 ? `${name}: ${value}%` : ""
-                  }
+                  label={({ value }) => (value > 5 ? `${value}%` : "")}
                   labelLine={false}
                 >
                   {pieData.current.map((_entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={COLORS[index]}
+                      fill={COLORS[index % COLORS.length]}
                       style={{ fontWeight: "bold" }}
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
+
+                <Legend
+                  layout="horizontal"
+                  verticalAlign="bottom"
+                  align="center"
+                  formatter={(value, entry) => (
+                    <span
+                      style={{
+                        color: entry.color,
+                        fontWeight: "bold",
+                        padding: "0 4px",
+                        display: "inline-block",
+                        fontSize: "16px",
+                      }}
+                    >
+                      {entry.payload.name}: {entry.payload.value}%
+                    </span>
+                  )}
+                  wrapperStyle={{
+                    bottom: 0,
+                    fontSize: "12px",
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    lineHeight: "24px",
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -980,18 +1043,22 @@ function App() {
           {/* Venture Debt Container */}
           <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full">
             <h3 className="text-lg font-bold mb-4">After Venture Debt</h3>
-            <div className="h-72 w-md">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+            <div className="w-full">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart
+                  margin={{ top: 100, right: 10, bottom: 70, left: 20 }}
+                >
                   <Pie
                     data={pieData.debt}
                     cx="50%"
-                    cy="50%"
-                    innerRadius={80}
-                    outerRadius={110}
+                    cy="40%"
+                    innerRadius={70}
+                    outerRadius={100}
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value.toFixed(0)}%`}
+                    label={({ value }) =>
+                      value > 5 ? `${value.toFixed(0)}%` : ""
+                    }
                     labelLine={false}
                   >
                     {pieData.current.map((_, index) => (
@@ -1002,7 +1069,34 @@ function App() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+
+                  <Legend
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    formatter={(value, entry) => (
+                      <span
+                        style={{
+                          color: entry.color,
+                          fontWeight: "bold",
+                          padding: "0 4px",
+                          display: "inline-block",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {entry.payload.name}: {entry.payload.value.toFixed(0)}%
+                      </span>
+                    )}
+                    wrapperStyle={{
+                      bottom: 0,
+                      fontSize: "12px",
+                      width: "100%",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "center",
+                      lineHeight: "24px",
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -1015,21 +1109,25 @@ function App() {
 
           {/* Venture Capital Container */}
           <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full">
-            <h3 className="text-lg font-bold mb-4">
+            <h3 className="text-lg text-center font-bold mb-4">
               After Venture Capital Funding
             </h3>
-            <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+            <div className="w-full">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart
+                  margin={{ top: 100, right: 20, bottom: 70, left: 10 }}
+                >
                   <Pie
                     data={pieData.vc}
                     cx="50%"
-                    cy="50%"
-                    innerRadius={80}
-                    outerRadius={110}
+                    cy="40%"
+                    innerRadius={70}
+                    outerRadius={100}
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    label={({ value }) =>
+                      value > 5 ? `${value.toFixed(0)}%` : ""
+                    }
                     labelLine={false}
                   >
                     {pieData.current.map((_, index) => (
@@ -1040,7 +1138,34 @@ function App() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+
+                  <Legend
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    formatter={(value, entry) => (
+                      <span
+                        style={{
+                          color: entry.color,
+                          fontWeight: "bold",
+                          padding: "0 4px",
+                          display: "inline-block",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {entry.payload.name}: {entry.payload.value.toFixed(0)}%
+                      </span>
+                    )}
+                    wrapperStyle={{
+                      bottom: 0,
+                      fontSize: "12px",
+                      width: "100%",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "center",
+                      lineHeight: "24px",
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -1053,23 +1178,31 @@ function App() {
         </div>
 
         {inputs.showHybridOption && (
-          <div className="flex flex-col items-center  bg-gray-100 rounded-lg p-4 shadow-md mb-8">
+          <div className="flex flex-col items-center bg-gray-100 rounded-lg p-4 shadow-md mb-8">
             <h3 className="text-md font-bold mb-2">
               Blend: {inputs.vcPercentage}% Venture Capital /{" "}
               {inputs.ventureDebtPercentage}% Debt
             </h3>
-            <div className="h-72 w-full flex justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+            <div className="w-full">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart
+                  margin={{ top: 100, right: 60, bottom: 70, left: 10 }}
+                >
                   <Pie
                     data={pieData.blend}
                     cx="50%"
-                    cy="50%"
+                    cy="40%"
                     innerRadius={70}
                     outerRadius={100}
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                    label={({ value }) =>
+                      value > 5
+                        ? `${
+                            Number.isInteger(value) ? value : value.toFixed(1)
+                          }%`
+                        : ""
+                    }
                     labelLine={false}
                   >
                     {pieData.current.map((_, index) => (
@@ -1080,7 +1213,33 @@ function App() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+                  <Legend
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    formatter={(value, entry) => (
+                      <span
+                        style={{
+                          color: entry.color,
+                          fontWeight: "bold",
+                          padding: "0 4px",
+                          display: "inline-block",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {entry.payload.name}: {entry.payload.value.toFixed(1)}%
+                      </span>
+                    )}
+                    wrapperStyle={{
+                      bottom: 0,
+                      fontSize: "12px",
+                      width: "100%",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "center",
+                      lineHeight: "24px",
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -1142,7 +1301,9 @@ function App() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Founder Profit with Debt:</span>
+                  <span className="text-sm">
+                    Founder Profit at Exit with Debt:
+                  </span>
                   <span className="font-semibold">
                     {formatCurrency(results.debtExitValue)}
                   </span>
@@ -1179,8 +1340,8 @@ function App() {
 
                 <div className="flex items-center justify-between text-[#608df7]">
                   <span className="text-sm">
-                    Estimated Excess Profit to Founder with Venture Debt vs.
-                    Equity:
+                    Estimated Excess Founder Profit at Exit with Debt versus
+                    Venture Capital:
                   </span>
                   <span className="font-semibold">
                     +{formatCurrency(results.exitValueDifference)}
@@ -1224,9 +1385,9 @@ function App() {
               <li className="flex items-start">
                 <span className="text-[#608df7] mr-2">■</span>
                 <span>
-                  Venture debt dilution is limited to warrant coverage of{" "}
-                  {inputs.warrantCoverage}%, compared to Venture Capital
-                  dilution of {results.vcDilution}%.
+                  Venture debt dilution is limited to warrant dilution of -
+                  {results.debtWarrantDilution}%, compared to Venture Capital
+                  dilution of -{results.vcDilution}%.
                 </span>
               </li>
 
@@ -1245,7 +1406,7 @@ function App() {
                 <li className="flex items-start">
                   <span className="text-[#608df7] mr-2">■</span>
                   <span>
-                    Total cost of deb{" "}
+                    Total cost of debt of{" "}
                     {formatCurrency(results.totalInterestPayments)} is lower
                     than the additional exit value of{" "}
                     {formatCurrency(results.exitValueDifference)}, making debt
@@ -1256,7 +1417,7 @@ function App() {
                 <li className="flex items-start">
                   <span className="text-[#608df7] mr-2">■</span>
                   <span>
-                    Total cost of deb{" "}
+                    Total cost of debt of{" "}
                     {formatCurrency(results.totalInterestPayments)} may offset
                     some of the equity preservation benefits.
                   </span>
@@ -1306,8 +1467,7 @@ function App() {
               <li className="flex items-start">
                 <span className="text-[#000000] mr-2">■</span>
                 <span>
-                  Note: Assumes X months of amortization. Where X links to the
-                  input Term (Months) which is 36 in our example.
+                  Note: Assumes {inputs.ventureDebtTerm} months of amortization.
                 </span>
               </li>
             </ul>
