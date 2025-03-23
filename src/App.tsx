@@ -231,33 +231,7 @@ function App() {
       ],
     });
   }, [inputs]);
-
-  // Custom tooltip for the pie chart
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: any[];
-  }) => {
-    if (active && payload && payload.length) {
-      const isPercentage =
-        payload[0].name === "Founder Ownership Post-Dilution";
-
-      return (
-        <div className="bg-white p-2 border rounded shadow text-xs">
-          <p className="font-medium">{payload[0].name}</p>
-          {isPercentage ? (
-            <p>{`${payload[0].value.toFixed(1)}%`}</p>
-          ) : (
-            <p>{formatCurrency(payload[0].value)}</p>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
+  
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -692,7 +666,7 @@ function App() {
                               textAnchor="middle"
                               fill="#666"
                             >
-                              {lines.map((line, index) => (
+                              {lines.map((line : string, index : number) => (
                                 <tspan
                                   key={index}
                                   x={x}
@@ -706,7 +680,7 @@ function App() {
                         }
                   }
                 />
-                <YAxis hide={true} domain={[0, (dataMax) => dataMax * 1.2]} />
+                <YAxis hide={true} domain={[0, (dataMax: number) => dataMax * 1.2]} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
@@ -840,7 +814,7 @@ function App() {
                               textAnchor="middle"
                               fill="#666"
                             >
-                              {lines.map((line, index) => (
+                              {lines.map((line : string, index : number) => (
                                 <tspan
                                   key={index}
                                   x={x}
@@ -855,7 +829,7 @@ function App() {
                   }
                 />
 
-                <YAxis hide domain={[0, (dataMax) => dataMax * 1.2]} />
+                <YAxis hide domain={[0, (dataMax : number) => dataMax * 1.2]} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload || !payload.length) return null;
@@ -894,8 +868,8 @@ function App() {
                   name="value"
                   isAnimationActive={true}
                   // Esta es la parte nueva que agrega fill específico por barra
-                  shape={(props) => {
-                    const { x, y, width, height, fill, name, payload } = props;
+                  shape={(props : any) => {
+                    const { x, y, width, height, payload } = props;
                     // Verificar si el dato pertenece a barra2
                     const isBarra2 = barra2.some(
                       (item) => item.name === payload.name
@@ -912,7 +886,7 @@ function App() {
                     );
                   }}
                   label={(props) => {
-                    if (!props || !props.name) return null;
+                    if (!props || !props.name) return <text />;
                     const { x, y, width, value, name, payload } = props;
 
                     const isSymbol =
@@ -924,17 +898,17 @@ function App() {
                       payload?.isPercentage ||
                       barra3.some((item) => item.name === name);
 
-                    const adjustedX = x + width / 2;
+                    
 
                     if (isPercentage) {
                       return (
                         <text
-                          x={adjustedX}
-                          y={y - 20}
-                          fill="#888888"
-                          textAnchor="middle"
-                          fontSize="clamp(15px, 2vw, 16px)"
-                          fontWeight="bold"
+                        x={x + width / 2}
+                        y={y - 20}
+                        fill="#888888"
+                        textAnchor="middle"
+                        fontSize="clamp(15px, 2vw, 16px)"
+                        fontWeight="bold"
                         >
                           {`${value}%`}
                         </text>
@@ -944,12 +918,12 @@ function App() {
                     if (isSymbol) {
                       return (
                         <text
-                          x={adjustedX}
-                          y={y - 20}
-                          fill="#888888"
-                          textAnchor="middle"
-                          fontSize="clamp(40px, 3vw, 20px)"
-                          fontWeight="bold"
+                        x={x + width / 2}
+                        y={y - 20}
+                        fill="#888888"
+                        textAnchor="middle"
+                        fontSize="clamp(40px, 3vw, 20px)"
+                        fontWeight="bold"
                         >
                           {name}
                         </text>
@@ -958,7 +932,7 @@ function App() {
 
                     return (
                       <text
-                        x={adjustedX}
+                      x={x + width / 2}
                         y={y - 10}
                         fill="#333"
                         textAnchor="middle"
@@ -1021,7 +995,7 @@ function App() {
                         fontSize: "16px",
                       }}
                     >
-                      {entry.payload.name}: {entry.payload.value}%
+                      {value}: {entry?.payload?.value}%
                     </span>
                   )}
                   wrapperStyle={{
@@ -1084,7 +1058,7 @@ function App() {
                           fontSize: "16px",
                         }}
                       >
-                        {entry.payload.name}: {entry.payload.value.toFixed(0)}%
+                        {value}: {entry?.payload?.value.toFixed(0)}%
                       </span>
                     )}
                     wrapperStyle={{
@@ -1153,7 +1127,7 @@ function App() {
                           fontSize: "16px",
                         }}
                       >
-                        {entry.payload.name}: {entry.payload.value.toFixed(0)}%
+                        {value}: {entry?.payload?.value.toFixed(0)}%
                       </span>
                     )}
                     wrapperStyle={{
@@ -1227,7 +1201,7 @@ function App() {
                           fontSize: "16px",
                         }}
                       >
-                        {entry.payload.name}: {entry.payload.value.toFixed(1)}%
+                        {value}: {entry?.payload?.value.toFixed(1)}%
                       </span>
                     )}
                     wrapperStyle={{
