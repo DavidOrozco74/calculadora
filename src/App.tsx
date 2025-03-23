@@ -1084,7 +1084,7 @@ function App() {
           {/* Venture Capital Container */}
           <div className="flex flex-col items-center bg-gray-100 rounded-lg p-6 shadow-md w-full">
             <h3 className="text-lg text-center font-bold mb-4">
-              After Venture Capital Funding
+              After Venture Capital
             </h3>
             <div className="w-full">
               <ResponsiveContainer width="100%" height={350}>
