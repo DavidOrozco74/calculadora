@@ -194,7 +194,6 @@ function App() {
       blendInterestPayments: Number(blendInterestPayments.toFixed(0)),
     });
 
-    console.log(results.debtOtherInvestorsNewOwnership);
 
     setPieData({
       current: [
@@ -1205,7 +1204,7 @@ function App() {
                           ? numValue
                           : numValue.toFixed(1);
 
-                          console.log(formattedValue);
+                         
 
                       } else {
                         // Si no se puede convertir a número, mostrar el valor original
