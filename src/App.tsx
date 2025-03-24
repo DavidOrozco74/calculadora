@@ -266,7 +266,7 @@ function App() {
 
   const currencyData2 = [
     {
-      name: "Founder Profit at Exit\nWith Venture Capital",
+      name: "Founder Profit at Exit\nwith Venture Capital",
       value: results.vcExitValue,
     },
   ];
@@ -624,7 +624,7 @@ function App() {
           </h3>
           <div className="w-full flex justify-center overflow-visible">
             <BubbleComponent
-              value={`${valorGlobo}M`}
+              value={`$${valorGlobo}M`}
               exitMultiple={inputs.exitMultiple}
             />
           </div>
@@ -969,7 +969,13 @@ function App() {
                   outerRadius={100}
                   paddingAngle={2}
                   dataKey="value"
-                  label={({ value }) => (value > 5 ? `${value}%` : "")}
+                  label={({ value }) =>
+                    value > 5
+                      ? `${
+                          Number.isInteger(value) ? value : value.toFixed(1)
+                        }%`
+                      : ""
+                  }
                   labelLine={false}
                 >
                   {pieData.current.map((_entry, index) => (
@@ -980,34 +986,53 @@ function App() {
                     />
                   ))}
                 </Pie>
-
                 <Legend
-                  layout="horizontal"
-                  verticalAlign="bottom"
-                  align="center"
-                  formatter={(value, entry) => (
-                    <span
-                      style={{
-                        color: entry.color,
-                        fontWeight: "bold",
-                        padding: "0 4px",
-                        display: "inline-block",
-                        fontSize: "16px",
-                      }}
-                    >
-                      {value}: {entry?.payload?.value}%
-                    </span>
-                  )}
-                  wrapperStyle={{
-                    bottom: 0,
-                    fontSize: "12px",
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                    lineHeight: "24px",
-                  }}
-                />
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    formatter={(value, entry) => {
+                      // Convertir el string a número
+                      const numValue = parseFloat(entry?.payload?.value);
+
+                      // Formatear el valor solo si es un número válido
+                      let formattedValue;
+                      if (!isNaN(numValue)) {
+                        // Verificar si es un entero después de convertirlo a número
+                        formattedValue = Number.isInteger(numValue)
+                          ? numValue
+                          : numValue.toFixed(1);
+
+                         
+
+                      } else {
+                        // Si no se puede convertir a número, mostrar el valor original
+                        formattedValue = entry.value || "0";
+                      }
+
+                      return (
+                        <span
+                          style={{
+                            color: entry.color,
+                            fontWeight: "bold",
+                            padding: "0 4px",
+                            display: "inline-block",
+                            fontSize: "16px",
+                          }}
+                        >
+                          {value}: {formattedValue}%
+                        </span>
+                      );
+                    }}
+                    wrapperStyle={{
+                      bottom: 0,
+                      fontSize: "12px",
+                      width: "100%",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "center",
+                      lineHeight: "24px",
+                    }}
+                  />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -1031,7 +1056,11 @@ function App() {
                     paddingAngle={2}
                     dataKey="value"
                     label={({ value }) =>
-                      value > 5 ? `${value.toFixed(0)}%` : ""
+                      value > 5
+                        ? `${
+                            Number.isInteger(value) ? value : value.toFixed(1)
+                          }%`
+                        : ""
                     }
                     labelLine={false}
                   >
@@ -1048,19 +1077,39 @@ function App() {
                     layout="horizontal"
                     verticalAlign="bottom"
                     align="center"
-                    formatter={(value, entry) => (
-                      <span
-                        style={{
-                          color: entry.color,
-                          fontWeight: "bold",
-                          padding: "0 4px",
-                          display: "inline-block",
-                          fontSize: "16px",
-                        }}
-                      >
-                        {value}: {entry?.payload?.value.toFixed(0)}%
-                      </span>
-                    )}
+                    formatter={(value, entry) => {
+                      // Convertir el string a número
+                      const numValue = parseFloat(entry?.payload?.value);
+
+                      // Formatear el valor solo si es un número válido
+                      let formattedValue;
+                      if (!isNaN(numValue)) {
+                        // Verificar si es un entero después de convertirlo a número
+                        formattedValue = Number.isInteger(numValue)
+                          ? numValue
+                          : numValue.toFixed(1);
+
+                         
+
+                      } else {
+                        // Si no se puede convertir a número, mostrar el valor original
+                        formattedValue = entry.value || "0";
+                      }
+
+                      return (
+                        <span
+                          style={{
+                            color: entry.color,
+                            fontWeight: "bold",
+                            padding: "0 4px",
+                            display: "inline-block",
+                            fontSize: "16px",
+                          }}
+                        >
+                          {value}: {formattedValue}%
+                        </span>
+                      );
+                    }}
                     wrapperStyle={{
                       bottom: 0,
                       fontSize: "12px",
@@ -1076,7 +1125,7 @@ function App() {
             </div>
             <div className="mt-4 text-center bg-[#6d93f5] p-3 rounded-lg">
               <span className="text-white font-semibold text-base">
-                Only -{results.debtWarrantDilution}% dilution
+                Only {results.debtWarrantDilution}% dilution
               </span>
             </div>
           </div>
@@ -1100,7 +1149,11 @@ function App() {
                     paddingAngle={2}
                     dataKey="value"
                     label={({ value }) =>
-                      value > 5 ? `${value.toFixed(0)}%` : ""
+                      value > 5
+                        ? `${
+                            Number.isInteger(value) ? value : value.toFixed(1)
+                          }%`
+                        : ""
                     }
                     labelLine={false}
                   >
@@ -1117,19 +1170,39 @@ function App() {
                     layout="horizontal"
                     verticalAlign="bottom"
                     align="center"
-                    formatter={(value, entry) => (
-                      <span
-                        style={{
-                          color: entry.color,
-                          fontWeight: "bold",
-                          padding: "0 4px",
-                          display: "inline-block",
-                          fontSize: "16px",
-                        }}
-                      >
-                        {value}: {entry?.payload?.value.toFixed(0)}%
-                      </span>
-                    )}
+                    formatter={(value, entry) => {
+                      // Convertir el string a número
+                      const numValue = parseFloat(entry?.payload?.value);
+
+                      // Formatear el valor solo si es un número válido
+                      let formattedValue;
+                      if (!isNaN(numValue)) {
+                        // Verificar si es un entero después de convertirlo a número
+                        formattedValue = Number.isInteger(numValue)
+                          ? numValue
+                          : numValue.toFixed(1);
+
+                         
+
+                      } else {
+                        // Si no se puede convertir a número, mostrar el valor original
+                        formattedValue = entry.value || "0";
+                      }
+
+                      return (
+                        <span
+                          style={{
+                            color: entry.color,
+                            fontWeight: "bold",
+                            padding: "0 4px",
+                            display: "inline-block",
+                            fontSize: "16px",
+                          }}
+                        >
+                          {value}: {formattedValue}%
+                        </span>
+                      );
+                    }}
                     wrapperStyle={{
                       bottom: 0,
                       fontSize: "12px",
@@ -1145,7 +1218,7 @@ function App() {
             </div>
             <div className="mt-4 text-center bg-[#6d93f5] p-3 rounded-lg">
               <span className="text-white font-semibold text-base">
-                -{results.vcDilution}% dilution
+                {results.vcDilution}% dilution
               </span>
             </div>
           </div>
@@ -1240,7 +1313,7 @@ function App() {
             </div>
             <div className="mt-2 text-center bg-[#6d93f5] p-2 rounded-lg">
               <span className="text-sky-50 font-semibold">
-                -{results.blendDilution}% dilution
+                {results.blendDilution}% dilution
               </span>
             </div>
           </div>
@@ -1380,9 +1453,9 @@ function App() {
               <li className="flex items-start">
                 <span className="text-[#608df7] mr-2">■</span>
                 <span>
-                  Venture debt dilution is limited to warrant dilution of -
-                  {results.debtWarrantDilution}%, compared to Venture Capital
-                  dilution of -{results.vcDilution}%.
+                  Venture debt dilution is limited to warrant dilution of 
+                  {results.debtWarrantDilution}%, compared to venture capital
+                  dilution of {results.vcDilution}%.
                 </span>
               </li>
 
