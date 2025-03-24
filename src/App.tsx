@@ -164,6 +164,7 @@ function App() {
     const blendExitValue =
       (blendNewOwnership / 100) * (exitValuation - blendInterestPayments);
 
+      
     setResults({
       vcDilution: Number(vcDilution.toFixed(1)),
       vcNewOwnership: Number(vcNewOwnership.toFixed(1)),
@@ -194,6 +195,7 @@ function App() {
       blendInterestPayments: Number(blendInterestPayments.toFixed(0)),
     });
 
+console.log(results);
 
     setPieData({
       current: [
@@ -260,7 +262,7 @@ function App() {
   const percentageData = [
     {
       name: `Founder Ownership\nPost-Dilution`,
-      value: results.vcNewOwnership, // Asegúrate que este sea el valor porcentual
+      value: results.vcNewOwnership.toFixed(1), // Asegúrate que este sea el valor porcentual
     },
   ];
 
@@ -289,7 +291,7 @@ function App() {
   const barra3 = [
     {
       name: `Founder Ownership`,
-      value: results.debtNewOwnership,
+      value: results.debtNewOwnership.toFixed(1),
     },
   ];
 
@@ -972,7 +974,7 @@ function App() {
                   label={({ value }) =>
                     value > 5
                       ? `${
-                          Number.isInteger(value) ? value : value.toFixed(1)
+                        value.toFixed(1)
                         }%`
                       : ""
                   }
@@ -991,24 +993,7 @@ function App() {
                     verticalAlign="bottom"
                     align="center"
                     formatter={(value, entry) => {
-                      // Convertir el string a número
-                      const numValue = parseFloat(entry?.payload?.value);
-
-                      // Formatear el valor solo si es un número válido
-                      let formattedValue;
-                      if (!isNaN(numValue)) {
-                        // Verificar si es un entero después de convertirlo a número
-                        formattedValue = Number.isInteger(numValue)
-                          ? numValue
-                          : numValue.toFixed(1);
-
-                         
-
-                      } else {
-                        // Si no se puede convertir a número, mostrar el valor original
-                        formattedValue = entry.value || "0";
-                      }
-
+                     
                       return (
                         <span
                           style={{
@@ -1019,7 +1004,7 @@ function App() {
                             fontSize: "16px",
                           }}
                         >
-                          {value}: {formattedValue}%
+                           {value}: {entry.payload?.value.toFixed(1)}%
                         </span>
                       );
                     }}
@@ -1058,7 +1043,7 @@ function App() {
                     label={({ value }) =>
                       value > 5
                         ? `${
-                            Number.isInteger(value) ? value : value.toFixed(1)
+                          value.toFixed(1)
                           }%`
                         : ""
                     }
@@ -1078,24 +1063,7 @@ function App() {
                     verticalAlign="bottom"
                     align="center"
                     formatter={(value, entry) => {
-                      // Convertir el string a número
-                      const numValue = parseFloat(entry?.payload?.value);
-
-                      // Formatear el valor solo si es un número válido
-                      let formattedValue;
-                      if (!isNaN(numValue)) {
-                        // Verificar si es un entero después de convertirlo a número
-                        formattedValue = Number.isInteger(numValue)
-                          ? numValue
-                          : numValue.toFixed(1);
-
-                         
-
-                      } else {
-                        // Si no se puede convertir a número, mostrar el valor original
-                        formattedValue = entry.value || "0";
-                      }
-
+                      console.log(entry);
                       return (
                         <span
                           style={{
@@ -1106,7 +1074,7 @@ function App() {
                             fontSize: "16px",
                           }}
                         >
-                          {value}: {formattedValue}%
+                          {value}: {entry.payload?.value.toFixed(1)}%
                         </span>
                       );
                     }}
@@ -1151,7 +1119,7 @@ function App() {
                     label={({ value }) =>
                       value > 5
                         ? `${
-                            Number.isInteger(value) ? value : value.toFixed(1)
+                            value.toFixed(1)
                           }%`
                         : ""
                     }
@@ -1170,25 +1138,7 @@ function App() {
                     layout="horizontal"
                     verticalAlign="bottom"
                     align="center"
-                    formatter={(value, entry) => {
-                      // Convertir el string a número
-                      const numValue = parseFloat(entry?.payload?.value);
-
-                      // Formatear el valor solo si es un número válido
-                      let formattedValue;
-                      if (!isNaN(numValue)) {
-                        // Verificar si es un entero después de convertirlo a número
-                        formattedValue = Number.isInteger(numValue)
-                          ? numValue
-                          : numValue.toFixed(1);
-
-                         
-
-                      } else {
-                        // Si no se puede convertir a número, mostrar el valor original
-                        formattedValue = entry.value || "0";
-                      }
-
+                    formatter={(value, entry) => {                     
                       return (
                         <span
                           style={{
@@ -1199,7 +1149,7 @@ function App() {
                             fontSize: "16px",
                           }}
                         >
-                          {value}: {formattedValue}%
+                          {value}: {entry.payload?.value.toFixed(1)}%
                         </span>
                       );
                     }}
@@ -1227,8 +1177,8 @@ function App() {
         {inputs.showHybridOption && (
           <div className="flex flex-col items-center bg-gray-100 rounded-lg p-4 shadow-md mb-8">
             <h3 className="text-md font-bold mb-2">
-              Blend: {inputs.vcPercentage}% Venture Capital /{" "}
-              {inputs.ventureDebtPercentage}% Debt
+              Blend: {inputs.vcPercentage.toFixed(1)}% Venture Capital /{" "}
+              {inputs.ventureDebtPercentage.toFixed(1)}% Debt
             </h3>
             <div className="w-full">
               <ResponsiveContainer width="100%" height={350}>
@@ -1246,7 +1196,7 @@ function App() {
                     label={({ value }) =>
                       value > 5
                         ? `${
-                            Number.isInteger(value) ? value : value.toFixed(1)
+                           value.toFixed(1)
                           }%`
                         : ""
                     }
@@ -1266,24 +1216,8 @@ function App() {
                     verticalAlign="bottom"
                     align="center"
                     formatter={(value, entry) => {
-                      // Convertir el string a número
-                      const numValue = parseFloat(entry?.payload?.value);
-
-                      // Formatear el valor solo si es un número válido
-                      let formattedValue;
-                      if (!isNaN(numValue)) {
-                        // Verificar si es un entero después de convertirlo a número
-                        formattedValue = Number.isInteger(numValue)
-                          ? numValue
-                          : numValue.toFixed(1);
-
-                         
-
-                      } else {
-                        // Si no se puede convertir a número, mostrar el valor original
-                        formattedValue = entry.value || "0";
-                      }
-
+                   
+                    
                       return (
                         <span
                           style={{
@@ -1294,7 +1228,7 @@ function App() {
                             fontSize: "16px",
                           }}
                         >
-                          {value}: {formattedValue}%
+                          {value}: {entry.payload?.value.toFixed(1)}%
                         </span>
                       );
                     }}
@@ -1332,13 +1266,13 @@ function App() {
                 <span className="text-sm">
                   Founder Ownership with Venture Capital:
                 </span>
-                <span className="font-semibold">{results.vcNewOwnership}%</span>
+                <span className="font-semibold">{results.vcNewOwnership.toFixed(1)}%</span>
               </div>
 
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm">Founder Ownership with Debt:</span>
                 <span className="font-semibold">
-                  {results.debtNewOwnership}%
+                  {results.debtNewOwnership.toFixed(1)}%
                 </span>
               </div>
 
@@ -1346,7 +1280,7 @@ function App() {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">Founder Ownership with Blend:</span>
                   <span className="font-semibold">
-                    {results.blendNewOwnership}%
+                    {results.blendNewOwnership.toFixed(1)}%
                   </span>
                 </div>
               )}
@@ -1354,7 +1288,7 @@ function App() {
               <div className="flex items-center justify-between text-[#608df7] mb-1">
                 <span className="text-sm">Equity Preserved with Debt:</span>
                 <span className="font-semibold">
-                  +{results.ownershipDifference}%
+                  +{results.ownershipDifference.toFixed(1)}%
                 </span>
               </div>
 
@@ -1431,7 +1365,7 @@ function App() {
                   <span>
                     With venture debt, you retain{" "}
                     <span className="font-semibold">
-                      {results.ownershipDifference}% more equity
+                      {results.ownershipDifference.toFixed(1)}% more equity
                     </span>
                     , which translates to{" "}
                     <span className="font-semibold">
@@ -1453,8 +1387,8 @@ function App() {
               <li className="flex items-start">
                 <span className="text-[#608df7] mr-2">■</span>
                 <span>
-                  Venture debt dilution is limited to warrant dilution of {results.debtWarrantDilution}%, compared to venture capital
-                  dilution of {results.vcDilution}%.
+                  Venture debt dilution is limited to warrant dilution of {results.debtWarrantDilution.toFixed(1)}%, compared to venture capital
+                  dilution of {results.vcDilution.toFixed(1)}%.
                 </span>
               </li>
 
@@ -1526,7 +1460,7 @@ function App() {
                   Note: Warrant coverage means the lender gets the right to
                   purchase shares equal to X% of the loan amount at a
                   predetermined price, typically based on the company's latest
-                  valuation. For example, on a $10M loan with 10% warrant
+                  valuation. For example, on a $10M loan with 10.0% warrant
                   coverage, the lender would receive warrants to buy $1M worth
                   of equity today at the agreed price.
                 </span>
