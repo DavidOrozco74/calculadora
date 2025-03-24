@@ -1453,8 +1453,7 @@ function App() {
               <li className="flex items-start">
                 <span className="text-[#608df7] mr-2">■</span>
                 <span>
-                  Venture debt dilution is limited to warrant dilution of 
-                  {results.debtWarrantDilution}%, compared to venture capital
+                  Venture debt dilution is limited to warrant dilution of {results.debtWarrantDilution}%, compared to venture capital
                   dilution of {results.vcDilution}%.
                 </span>
               </li>
