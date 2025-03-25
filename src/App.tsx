@@ -840,7 +840,7 @@ function App() {
                   dataKey="name"
                   tick={
                     window.innerWidth < 768
-                      ? false // Oculta etiquetas en móviles
+                      ? false 
                       : ({ x, y, payload }) => {
                           const lines = payload.value.split("\n");
                           return (
