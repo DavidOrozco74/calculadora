@@ -520,14 +520,12 @@ function App() {
                 </div>
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>
-                    Venture Capital: $
-                    {formatCurrency(
+                    Venture Capital: {formatCurrency(
                       (inputs.fundingNeeded * inputs.vcPercentage) / 100
                     )}
                   </span>
                   <span>
-                    Venture Debt: $
-                    {formatCurrency(
+                    Venture Debt: {formatCurrency(
                       (inputs.fundingNeeded * inputs.ventureDebtPercentage) /
                         100
                     )}
@@ -836,7 +834,7 @@ function App() {
                   ...simboly2,
                   ...barra4,
                 ]}
-                margin={{ top: 20, right: 10, left: 10, bottom: 50 }}
+                margin={{ top: 20, right: 15, left: 15, bottom: 50 }}
               >
                 <XAxis
                   dataKey="name"
@@ -1497,11 +1495,15 @@ function App() {
               Disclaimer:
             </h3>
 
-         
-                <span className="flex items-start text-sm">
-                This tool is for general informational purposes only and does not constitute legal, financial, or other professional advice. We make no warranties or representations of any kind, express or implied, regarding its accuracy, completeness, or reliability, as it is intended for estimation purposes only. We are not responsible for any actions taken or decisions made in reliance of this tool or the resulting calculations.
-                </span>
-          
+            <span className="flex items-start text-sm">
+              This tool is for general informational purposes only and does not
+              constitute legal, financial, or other professional advice. We make
+              no warranties or representations of any kind, express or implied,
+              regarding its accuracy, completeness, or reliability, as it is
+              intended for estimation purposes only. We are not responsible for
+              any actions taken or decisions made in reliance of this tool or
+              the resulting calculations.
+            </span>
           </div>
         </div>
       </div>
