@@ -333,7 +333,11 @@ function App() {
                 <input
                   type="text"
                   name="companyValuation"
-                  value={inputs.companyValuation || ""}
+                  value={
+                    inputs.companyValuation
+                      ? inputs.companyValuation.toLocaleString("en-US") // Formatea con comas de miles
+                      : ""
+                  }
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const value = e.target.value.replace(/[^0-9.]/g, "");
                     setInputs((prev) => ({
@@ -397,7 +401,11 @@ function App() {
                 <input
                   type="text"
                   name="fundingNeeded"
-                  value={inputs.fundingNeeded || ""}
+                  value={
+                    inputs.fundingNeeded
+                      ? inputs.fundingNeeded.toLocaleString("en-US") // Formatea con comas de miles
+                      : ""
+                  }
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const value = e.target.value.replace(/[^0-9.]/g, ""); // Permite solo números y punto decimal
                     setInputs((prev) => ({
@@ -614,7 +622,11 @@ function App() {
               <input
                 type="text"
                 name="exitMultiple"
-                value={inputs.exitMultiple || ""}
+                value={
+                  inputs.exitMultiple
+                    ? inputs.exitMultiple.toLocaleString("en-US") // Formatea con comas de miles
+                    : ""
+                }
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   let value = e.target.value.replace(/[^0-9.]/g, ""); // Permite solo números y punto decimal
                   let numValue = parseFloat(value);
@@ -1480,6 +1492,18 @@ function App() {
                 </span>
               </li>
             </ul>
+          </div>
+
+          <div className="bg-gray-100 p-5 rounded-lg">
+            <h3 className="text-lg font-medium mb-1 text-black ">
+              Disclaimer:
+            </h3>
+
+         
+                <span className="flex items-start text-sm">
+                This tool is for general informational purposes only and does not constitute legal, financial, or other professional advice. We make no warranties or representations of any kind, express or implied, regarding its accuracy, completeness, or reliability, as it is intended for estimation purposes only. We are not responsible for any actions taken or decisions made in reliance of this tool or the resulting calculations.
+                </span>
+          
           </div>
         </div>
       </div>
