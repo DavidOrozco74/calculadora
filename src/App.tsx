@@ -90,7 +90,6 @@ function App() {
     }
   };
 
-  // Calculate results whenever inputs change
   useEffect(() => {
     // Calculate funding amounts for each source
     const vcAmount = inputs.fundingNeeded * (inputs.vcPercentage / 100);
