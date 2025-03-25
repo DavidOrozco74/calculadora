@@ -32,7 +32,6 @@ function App() {
     ventureDebtTerm: 36,
     warrantCoverage: 10,
     exitMultiple: 30000000,
-    // exitTimeframe: 4,
     showHybridOption: false,
   });
 
