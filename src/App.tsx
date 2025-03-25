@@ -164,7 +164,6 @@ function App() {
     const blendExitValue =
       (blendNewOwnership / 100) * (exitValuation - blendInterestPayments);
 
-      
     setResults({
       vcDilution: Number(vcDilution.toFixed(1)),
       vcNewOwnership: Number(vcNewOwnership.toFixed(1)),
@@ -195,7 +194,7 @@ function App() {
       blendInterestPayments: Number(blendInterestPayments.toFixed(0)),
     });
 
-console.log(results);
+    console.log(results);
 
     setPieData({
       current: [
@@ -332,10 +331,16 @@ console.log(results);
                   $
                 </span>
                 <input
-                  type="number"
+                  type="text"
                   name="companyValuation"
-                  value={inputs.companyValuation}
-                  onChange={handleInputChange}
+                  value={inputs.companyValuation || ""}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = e.target.value.replace(/[^0-9.]/g, "");
+                    setInputs((prev) => ({
+                      ...prev,
+                      companyValuation: value ? parseFloat(value) : 0, // Convierte a número o usa 0
+                    }));
+                  }}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
@@ -390,10 +395,16 @@ console.log(results);
                   $
                 </span>
                 <input
-                  type="number"
+                  type="text"
                   name="fundingNeeded"
-                  value={inputs.fundingNeeded}
-                  onChange={handleInputChange}
+                  value={inputs.fundingNeeded || ""}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = e.target.value.replace(/[^0-9.]/g, ""); // Permite solo números y punto decimal
+                    setInputs((prev) => ({
+                      ...prev,
+                      fundingNeeded: value ? parseFloat(value) : 0, // Convierte a número o usa 0
+                    }));
+                  }}
                   className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
@@ -601,13 +612,26 @@ console.log(results);
                 Exit Valuation
               </label>
               <input
-                type="number"
+                type="text"
                 name="exitMultiple"
-                value={inputs.exitMultiple}
-                onChange={handleInputChange}
+                value={inputs.exitMultiple || ""}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  let value = e.target.value.replace(/[^0-9.]/g, ""); // Permite solo números y punto decimal
+                  let numValue = parseFloat(value);
+
+                  // Limita el valor mínimo a 1
+                  if (value === "") {
+                    value = "";
+                  } else if (numValue < 1) {
+                    value = "1";
+                  }
+
+                  setInputs((prev) => ({
+                    ...prev,
+                    exitMultiple: value ? parseFloat(value) : 0, // Convierte a número o usa 0
+                  }));
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                min="1"
-                step="0.5"
               />
             </div>
           </div>
@@ -972,11 +996,7 @@ console.log(results);
                   paddingAngle={2}
                   dataKey="value"
                   label={({ value }) =>
-                    value > 5
-                      ? `${
-                        value.toFixed(1)
-                        }%`
-                      : ""
+                    value > 5 ? `${value.toFixed(1)}%` : ""
                   }
                   labelLine={false}
                 >
@@ -989,35 +1009,34 @@ console.log(results);
                   ))}
                 </Pie>
                 <Legend
-                    layout="horizontal"
-                    verticalAlign="bottom"
-                    align="center"
-                    formatter={(value, entry) => {
-                     
-                      return (
-                        <span
-                          style={{
-                            color: entry.color,
-                            fontWeight: "bold",
-                            padding: "0 4px",
-                            display: "inline-block",
-                            fontSize: "16px",
-                          }}
-                        >
-                           {value}: {entry.payload?.value.toFixed(1)}%
-                        </span>
-                      );
-                    }}
-                    wrapperStyle={{
-                      bottom: 0,
-                      fontSize: "12px",
-                      width: "100%",
-                      display: "flex",
-                      flexWrap: "wrap",
-                      justifyContent: "center",
-                      lineHeight: "24px",
-                    }}
-                  />
+                  layout="horizontal"
+                  verticalAlign="bottom"
+                  align="center"
+                  formatter={(value, entry) => {
+                    return (
+                      <span
+                        style={{
+                          color: entry.color,
+                          fontWeight: "bold",
+                          padding: "0 4px",
+                          display: "inline-block",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {value}: {entry.payload?.value.toFixed(1)}%
+                      </span>
+                    );
+                  }}
+                  wrapperStyle={{
+                    bottom: 0,
+                    fontSize: "12px",
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    lineHeight: "24px",
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -1041,11 +1060,7 @@ console.log(results);
                     paddingAngle={2}
                     dataKey="value"
                     label={({ value }) =>
-                      value > 5
-                        ? `${
-                          value.toFixed(1)
-                          }%`
-                        : ""
+                      value > 5 ? `${value.toFixed(1)}%` : ""
                     }
                     labelLine={false}
                   >
@@ -1093,7 +1108,7 @@ console.log(results);
             </div>
             <div className="mt-4 text-center bg-[#6d93f5] p-3 rounded-lg">
               <span className="text-white font-semibold text-base">
-                Only {results.debtWarrantDilution}% dilution
+                Only {results.debtWarrantDilution.toFixed(1)}% dilution
               </span>
             </div>
           </div>
@@ -1117,11 +1132,7 @@ console.log(results);
                     paddingAngle={2}
                     dataKey="value"
                     label={({ value }) =>
-                      value > 5
-                        ? `${
-                            value.toFixed(1)
-                          }%`
-                        : ""
+                      value > 5 ? `${value.toFixed(1)}%` : ""
                     }
                     labelLine={false}
                   >
@@ -1138,7 +1149,7 @@ console.log(results);
                     layout="horizontal"
                     verticalAlign="bottom"
                     align="center"
-                    formatter={(value, entry) => {                     
+                    formatter={(value, entry) => {
                       return (
                         <span
                           style={{
@@ -1168,7 +1179,7 @@ console.log(results);
             </div>
             <div className="mt-4 text-center bg-[#6d93f5] p-3 rounded-lg">
               <span className="text-white font-semibold text-base">
-                {results.vcDilution}% dilution
+                {results.vcDilution.toFixed(1)}% dilution
               </span>
             </div>
           </div>
@@ -1194,11 +1205,7 @@ console.log(results);
                     paddingAngle={2}
                     dataKey="value"
                     label={({ value }) =>
-                      value > 5
-                        ? `${
-                           value.toFixed(1)
-                          }%`
-                        : ""
+                      value > 5 ? `${value.toFixed(1)}%` : ""
                     }
                     labelLine={false}
                   >
@@ -1216,8 +1223,6 @@ console.log(results);
                     verticalAlign="bottom"
                     align="center"
                     formatter={(value, entry) => {
-                   
-                    
                       return (
                         <span
                           style={{
@@ -1247,7 +1252,7 @@ console.log(results);
             </div>
             <div className="mt-2 text-center bg-[#6d93f5] p-2 rounded-lg">
               <span className="text-sky-50 font-semibold">
-                {results.blendDilution}% dilution
+                {results.blendDilution.toFixed(1)}% dilution
               </span>
             </div>
           </div>
@@ -1266,7 +1271,9 @@ console.log(results);
                 <span className="text-sm">
                   Founder Ownership with Venture Capital:
                 </span>
-                <span className="font-semibold">{results.vcNewOwnership.toFixed(1)}%</span>
+                <span className="font-semibold">
+                  {results.vcNewOwnership.toFixed(1)}%
+                </span>
               </div>
 
               <div className="flex items-center justify-between mb-1">
@@ -1387,8 +1394,9 @@ console.log(results);
               <li className="flex items-start">
                 <span className="text-[#608df7] mr-2">■</span>
                 <span>
-                  Venture debt dilution is limited to warrant dilution of {results.debtWarrantDilution.toFixed(1)}%, compared to venture capital
-                  dilution of {results.vcDilution.toFixed(1)}%.
+                  Venture debt dilution is limited to warrant dilution of{" "}
+                  {results.debtWarrantDilution.toFixed(1)}%, compared to venture
+                  capital dilution of {results.vcDilution.toFixed(1)}%.
                 </span>
               </li>
 
