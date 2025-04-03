@@ -323,6 +323,9 @@ function App() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
                 Next Round Valuation
+                {inputs.companyValuation === 0 && (
+                <span className="text-red-500 ml-2">Required</span>
+              )}
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
@@ -343,7 +346,9 @@ function App() {
                       companyValuation: value ? parseFloat(value) : 0, // Convierte a número o usa 0
                     }));
                   }}
-                  className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                 className={`w-full pl-7 p-2 border ${
+                    inputs.companyValuation === 0 ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                 />
               </div>
             </div>
@@ -351,6 +356,9 @@ function App() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
                 Founder Ownership
+                {(inputs.founderOwnership === 0 || isNaN(inputs.founderOwnership)) && (
+                <span className="text-red-500 ml-2">Required</span>
+              )}
               </label>
               <div className="relative">
                 <input
@@ -358,10 +366,12 @@ function App() {
                   name="founderOwnership"
                   value={inputs.founderOwnership}
                   onChange={handleInputChange}
-                  className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  max="100"
-                  min="0"
-                />
+                  className={`w-full pr-7 p-2 border ${
+                  (inputs.founderOwnership === 0 || isNaN(inputs.founderOwnership)) ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                max="100"
+                min="0"
+              />
                 <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
                   %
                 </span>
@@ -391,6 +401,9 @@ function App() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
                 Funding Needed
+                {(inputs.fundingNeeded === 0 || isNaN(inputs.fundingNeeded)) && (
+                <span className="text-red-500 ml-2">Required</span>
+              )}
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
@@ -411,7 +424,9 @@ function App() {
                       fundingNeeded: value ? parseFloat(value) : 0, // Convierte a número o usa 0
                     }));
                   }}
-                  className="w-full pl-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className={`w-full pl-7 p-2 border ${
+                    inputs.fundingNeeded === 0 ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                 />
               </div>
             </div>
@@ -456,6 +471,9 @@ function App() {
                   <div className="flex-1">
                     <label className="text-sm font-medium text-black">
                       Venture Capital %
+                      {(inputs.vcPercentage === 0 || isNaN(inputs.vcPercentage)) && (
+                        <span className="text-red-500 ml-2">Required</span>
+                      )}
                     </label>
                     <div className="relative">
                       <input
@@ -473,7 +491,9 @@ function App() {
                             ventureDebtPercentage: 100 - vcValue,
                           }));
                         }}
-                        className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className={`w-full pr-7 p-2 border ${
+                          (inputs.vcPercentage=== 0 || isNaN(inputs.vcPercentage)) ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                         max="100"
                         min="0"
                       />
@@ -485,6 +505,9 @@ function App() {
                   <div className="flex-1">
                     <label className="text-sm font-medium text-black">
                       Venture Debt %
+                      {(inputs.ventureDebtPercentage === 0 || isNaN(inputs.ventureDebtPercentage)) && (
+                        <span className="text-red-500 ml-2">Required</span>
+                      )}
                     </label>
                     <div className="relative">
                       <input
@@ -502,7 +525,9 @@ function App() {
                             vcPercentage: 100 - debtValue,
                           }));
                         }}
-                        className="w-full pr-7 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className={`w-full pr-7 p-2 border ${
+                          (inputs.ventureDebtPercentage === 0 || isNaN(inputs.ventureDebtPercentage)) ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                         max="100"
                         min="0"
                       />
@@ -543,6 +568,9 @@ function App() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
                 Total Debt Cost of Capital
+                {(inputs.ventureDebtInterestRate === 0 || isNaN(inputs.ventureDebtInterestRate)) && (
+                        <span className="text-red-500 ml-2">Required</span>
+                )}
               </label>
               <div className="relative">
                 <input
@@ -550,7 +578,9 @@ function App() {
                   name="ventureDebtInterestRate"
                   value={inputs.ventureDebtInterestRate}
                   onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className={`w-full pr-7 p-2 border ${
+                    (inputs.ventureDebtInterestRate === 0 || isNaN(inputs.ventureDebtInterestRate)) ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                   max="30"
                   min="0"
                   step="0.5"
@@ -565,6 +595,10 @@ function App() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
                 Term Length
+                {(inputs.ventureDebtTerm === 0 || isNaN(inputs.ventureDebtTerm)) && (
+                <span className="text-red-500 ml-2">Required</span>
+              )}
+      
               </label>
               <div className="relative">
                 <input
@@ -572,7 +606,11 @@ function App() {
                   name="ventureDebtTerm"
                   value={inputs.ventureDebtTerm}
                   onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className={`w-full pr-7 p-2 border ${
+                    (inputs.ventureDebtTerm === 0 || isNaN(inputs.ventureDebtTerm)) ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                  max="100"
+                  min="0"
                 />
                 <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 text-sm">
                   mos
@@ -584,6 +622,9 @@ function App() {
             <div className="md:col-span-1 space-y-2">
               <label className="text-sm font-medium text-black">
                 Warrant Coverage
+                {(inputs.warrantCoverage === 0 || isNaN(inputs.warrantCoverage)) && (
+                <span className="text-red-500 ml-2">Required</span>
+              )}
               </label>
               <div className="relative">
                 <input
@@ -591,7 +632,9 @@ function App() {
                   name="warrantCoverage"
                   value={inputs.warrantCoverage}
                   onChange={handleInputChange}
-                  className="w-full pr-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className={`w-full pr-7 p-2 border ${
+                    (inputs.warrantCoverage === 0 || isNaN(inputs.warrantCoverage)) ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                   max="100"
                   min="0"
                   step="0.5"
@@ -614,6 +657,9 @@ function App() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-black">
                 Exit Valuation
+                {inputs.exitMultiple === 0 && (
+                <span className="text-red-500 ml-2">Required</span>
+              )}
               </label>
               <input
                 type="text"
@@ -639,7 +685,9 @@ function App() {
                     exitMultiple: value ? parseFloat(value) : 0, // Convierte a número o usa 0
                   }));
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={`w-full pl-7 p-2 border ${
+                  inputs.exitMultiple === 0 ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
               />
             </div>
           </div>
