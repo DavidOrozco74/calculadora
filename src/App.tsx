@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   PieChart,
   Pie,
@@ -119,8 +119,7 @@ function App() {
   const [showGraphs, setShowGraphs] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
-  // Handle input changes
+  const graphRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Solo si showHybridOption está activado, validamos vcPercentage y ventureDebtPercentage
@@ -350,6 +349,31 @@ function App() {
 
   const valorGlobo = (results.exitValueDifference / 1000000).toFixed(1);
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+
+    // 1) Actualiza showHybridOption
+    setInputs((prev) => ({ ...prev, showHybridOption: checked }));
+
+    // 2) Resetea la validación para que no aparezca "Required"
+    setFormSubmitted(false);
+
+    // 3) Oculta TODOS los gráficos
+    setShowGraphs(false);
+
+    // 4) (Opcional) Limpia los valores híbridos si quieres
+    setInputs((prev) => ({
+      ...prev,
+      vcPercentage: 0,
+      ventureDebtPercentage: 0,
+    }));
+    setDisplayInputs((prev) => ({
+      ...prev,
+      vcPercentage: "",
+      ventureDebtPercentage: "",
+    }));
+  };
+
   const validateFields = () => {
     return (
       inputs.companyValuation > 0 &&
@@ -411,6 +435,40 @@ function App() {
       }));
     }
   };
+
+  useEffect(() => {
+    if (showGraphs && graphRef.current) {
+      graphRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showGraphs]);
+
+  const handleHybridInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  // 1) Limpiar y parsear
+  const raw = value.replace(/[^0-9.]/g, "");
+  let num = parseFloat(raw);
+  if (isNaN(num)) num = 0;
+  if (num < 0) num = 0;
+  if (num > 100) num = 100;
+
+  // 2) Calcular complemento para sumar 100
+  const otherName = name === "vcPercentage" ? "ventureDebtPercentage" : "vcPercentage";
+  const otherValue = 100 - num;
+
+  // 3) Actualizar ambos estados numéricos
+  setInputs(prev => ({
+    ...prev,
+    [name]: num,
+    [otherName]: otherValue,
+  }));
+
+  // 4) Actualizar los strings formateados
+  setDisplayInputs(prev => ({
+    ...prev,
+    [name]: formatInput(num.toString()),
+    [otherName]: formatInput(otherValue.toString()),
+  }));
+};
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-100  shadow-md space-y-6">
@@ -550,12 +608,7 @@ function App() {
                   type="checkbox"
                   className="sr-only peer"
                   checked={inputs.showHybridOption}
-                  onChange={(e) => {
-                    setInputs((prev) => ({
-                      ...prev,
-                      showHybridOption: e.target.checked,
-                    }));
-                  }}
+                  onChange={handleCheckboxChange}
                 />
                 <div
                   className={`w-12 h-6 flex items-center rounded-full p-0.5 duration-300 ease-in-out ${
@@ -590,7 +643,7 @@ function App() {
                         name="vcPercentage"
                         value={displayInputs.vcPercentage}
                         placeholder={placeholder.vcPercentage.toString()}
-                        onChange={handleInputChange}
+                        onChange={handleHybridInputChange}
                         className={`w-full pl-7 p-2 border ${
                           formSubmitted && inputs.companyValuation === 0
                             ? "border-red-500"
@@ -620,7 +673,7 @@ function App() {
                         name="ventureDebtPercentage"
                         value={displayInputs.ventureDebtPercentage}
                         placeholder={placeholder.ventureDebtPercentage.toString()}
-                        onChange={handleInputChange}
+                        onChange={handleHybridInputChange}
                         className={`w-full pl-7 p-2 border ${
                           formSubmitted && inputs.companyValuation === 0
                             ? "border-red-500"
@@ -803,7 +856,7 @@ function App() {
   `}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              disabled={!isButtonEnabled} // El botón estará habilitado solo cuando se cumpla la condición
+              disabled={!isButtonEnabled}
             >
               {"Calculate"}
             </button>
@@ -813,7 +866,10 @@ function App() {
 
       {showGraphs && (
         <div>
-          <div className="bg-white p-4 md:p-6 rounded-lg shadow-md col-span-2">
+          <div
+            ref={graphRef}
+            className="bg-white p-4 md:p-6 rounded-lg shadow-md col-span-2"
+          >
             <h2 className="text-base md:text-lg font-semibold mb-4 md:mb-6 text-center text-blue-600 border-b border-gray-200 pb-2">
               Founder Profit at Exit Valuation
             </h2>
