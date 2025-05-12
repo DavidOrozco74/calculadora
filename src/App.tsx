@@ -47,8 +47,7 @@ function App() {
     warrantCoverage: 10,
     exitMultiple: 30000000,
   });
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-
+  
   const [inputs, setInputs] = useState<Inputs>({
     companyValuation: 0,
     founderOwnership: 0,
@@ -62,7 +61,7 @@ function App() {
     exitMultiple: 0,
     showHybridOption: false,
   });
-
+  
   const [displayInputs, setDisplayInputs] = useState({
     companyValuation: "",
     founderOwnership: "",
@@ -74,13 +73,102 @@ function App() {
     warrantCoverage: "",
     exitMultiple: "",
   });
-
+  
   const formatInput = (val: string) => {
     const number = parseFloat(val.replace(/,/g, ""));
     if (isNaN(number)) return "";
     return number.toLocaleString("en-US");
   };
 
+   const hideGraphsOnChange = () => {
+    if (showGraphs) {
+      setShowGraphs(false);
+    }
+  };
+
+   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const raw = value.replace(/[^0-9.]/g, "");
+    let num = parseFloat(raw) || 0;
+
+    if (["vcPercentage","ventureDebtPercentage","warrantCoverage","founderOwnership"].includes(name)) {
+      num = Math.min(Math.max(num, 0), 100);
+    }
+
+    setDisplayInputs(prev => ({
+      ...prev,
+      [name]: formatInput(raw)
+    }));
+
+    setInputs(prev => ({
+      ...prev,
+      [name]: num,
+      ...(name === "founderOwnership"
+        ? { otherInvestorsOwnership: 100 - num }
+        : {})
+    }));
+
+    hideGraphsOnChange();
+  };
+
+   const handleHybridInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let num = parseFloat(value.replace(/[^0-9.]/g, "")) || 0;
+    num = Math.min(Math.max(num, 0), 100);
+
+    const otherName = name === "vcPercentage"
+      ? "ventureDebtPercentage"
+      : "vcPercentage";
+    const otherValue = 100 - num;
+
+    setDisplayInputs(prev => ({
+      ...prev,
+      [name]: formatInput(num.toString()),
+      [otherName]: formatInput(otherValue.toString())
+    }));
+
+    setInputs(prev => ({
+      ...prev,
+      [name]: num,
+      [otherName]: otherValue
+    }));
+
+    hideGraphsOnChange();
+  };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs(prev => ({ ...prev, showHybridOption: e.target.checked }));
+    hideGraphsOnChange();
+  };
+
+  const validateFields = () => {
+    return (
+      inputs.companyValuation > 0 &&
+      inputs.founderOwnership > 0 &&
+      inputs.fundingNeeded > 0 &&
+      (inputs.showHybridOption
+        ? inputs.vcPercentage > 0 && inputs.ventureDebtPercentage > 0
+        : true) &&
+      inputs.ventureDebtInterestRate > 0 &&
+      inputs.ventureDebtTerm > 0 &&
+      inputs.warrantCoverage > 0 &&
+      inputs.exitMultiple > 0
+    );
+  };
+
+  const handleButtonClick = () => {
+    setFormSubmitted(true);
+    if (validateFields()) {
+      setShowGraphs(true);
+      // scroll into view after render
+      setTimeout(() => {
+        graphRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
+    } else {
+      setShowGraphs(false);
+    }
+  };
+  
   // Results state
   const [results, setResults] = useState({
     vcDilution: 0,
@@ -104,18 +192,19 @@ function App() {
     blendExitValue: 0,
     blendInterestPayments: 0,
   });
-
+  
   // Pie chart data
-
+  
   const [pieData, setPieData] = useState<PieDataType>({
     current: [],
     vc: [],
     debt: [],
     blend: [],
   });
-
+  
   // Colors for pie charts
   const COLORS = ["#0057FF", "#888888", "#000000"];
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [showGraphs, setShowGraphs] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -137,6 +226,21 @@ function App() {
     inputs.ventureDebtPercentage,
     inputs.showHybridOption,
   ]);
+
+  useEffect(() => {
+  setIsButtonEnabled(
+    inputs.showHybridOption
+      ? inputs.vcPercentage > 0 && inputs.ventureDebtPercentage > 0
+      : true
+  );
+}, [inputs.vcPercentage, inputs.ventureDebtPercentage, inputs.showHybridOption]);
+
+
+  useEffect(() => {
+  if (showGraphs && graphRef.current) {
+    graphRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}, [showGraphs]);
 
   useEffect(() => {
     // Calculate funding amounts for each source
@@ -349,126 +453,19 @@ function App() {
 
   const valorGlobo = (results.exitValueDifference / 1000000).toFixed(1);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
 
-    // 1) Actualiza showHybridOption
-    setInputs((prev) => ({ ...prev, showHybridOption: checked }));
+ 
 
-    // 2) Resetea la validación para que no aparezca "Required"
-    setFormSubmitted(false);
 
-    // 3) Oculta TODOS los gráficos
-    setShowGraphs(false);
 
-    // 4) (Opcional) Limpia los valores híbridos si quieres
-    setInputs((prev) => ({
-      ...prev,
-      vcPercentage: 0,
-      ventureDebtPercentage: 0,
-    }));
-    setDisplayInputs((prev) => ({
-      ...prev,
-      vcPercentage: "",
-      ventureDebtPercentage: "",
-    }));
-  };
 
-  const validateFields = () => {
-    return (
-      inputs.companyValuation > 0 &&
-      inputs.founderOwnership > 0 &&
-      inputs.fundingNeeded > 0 &&
-      (inputs.showHybridOption
-        ? inputs.vcPercentage > 0 && inputs.ventureDebtPercentage > 0
-        : true) && // Solo validamos vcPercentage y ventureDebtPercentage si el checkbox está activo
-      inputs.ventureDebtInterestRate > 0 &&
-      inputs.ventureDebtTerm > 0 &&
-      inputs.warrantCoverage > 0 &&
-      inputs.exitMultiple > 0
-    );
-  };
 
-  const handleButtonClick = () => {
-    setFormSubmitted(true); // Marcar como enviado
-    if (validateFields()) {
-      setShowGraphs(true);
-    }
-  };
 
-  useEffect(() => {
-    if (formSubmitted) {
-      setShowGraphs(validateFields());
-    }
-  }, [inputs, formSubmitted]);
+  
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const rawValue = value.replace(/[^0-9.]/g, "");
 
-    let cappedValue = rawValue;
-    if (
-      [
-        "vcPercentage",
-        "ventureDebtPercentage",
-        "warrantCoverage",
-        "founderOwnership",
-      ].includes(name)
-    ) {
-      const num = parseFloat(rawValue);
-      if (!isNaN(num) && num > 100) cappedValue = "100";
-    }
 
-    setDisplayInputs((prev) => ({ ...prev, [name]: formatInput(cappedValue) }));
-
-    const parsedValue = parseFloat(cappedValue);
-    if (name === "founderOwnership") {
-      setInputs((prev) => ({
-        ...prev,
-        founderOwnership: isNaN(parsedValue) ? 0 : parsedValue,
-        otherInvestorsOwnership: isNaN(parsedValue) ? 100 : 100 - parsedValue,
-      }));
-    } else {
-      setInputs((prev) => ({
-        ...prev,
-        [name]: isNaN(parsedValue) ? 0 : parsedValue,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    if (showGraphs && graphRef.current) {
-      graphRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [showGraphs]);
-
-  const handleHybridInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  // 1) Limpiar y parsear
-  const raw = value.replace(/[^0-9.]/g, "");
-  let num = parseFloat(raw);
-  if (isNaN(num)) num = 0;
-  if (num < 0) num = 0;
-  if (num > 100) num = 100;
-
-  // 2) Calcular complemento para sumar 100
-  const otherName = name === "vcPercentage" ? "ventureDebtPercentage" : "vcPercentage";
-  const otherValue = 100 - num;
-
-  // 3) Actualizar ambos estados numéricos
-  setInputs(prev => ({
-    ...prev,
-    [name]: num,
-    [otherName]: otherValue,
-  }));
-
-  // 4) Actualizar los strings formateados
-  setDisplayInputs(prev => ({
-    ...prev,
-    [name]: formatInput(num.toString()),
-    [otherName]: formatInput(otherValue.toString()),
-  }));
-};
+  
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-100  shadow-md space-y-6">
