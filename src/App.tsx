@@ -47,7 +47,7 @@ function App() {
     warrantCoverage: 10,
     exitMultiple: 30000000,
   });
-  
+
   const [inputs, setInputs] = useState<Inputs>({
     companyValuation: 0,
     founderOwnership: 0,
@@ -61,7 +61,7 @@ function App() {
     exitMultiple: 0,
     showHybridOption: false,
   });
-  
+
   const [displayInputs, setDisplayInputs] = useState({
     companyValuation: "",
     founderOwnership: "",
@@ -73,71 +73,77 @@ function App() {
     warrantCoverage: "",
     exitMultiple: "",
   });
-  
+
   const formatInput = (val: string) => {
     const number = parseFloat(val.replace(/,/g, ""));
     if (isNaN(number)) return "";
     return number.toLocaleString("en-US");
   };
 
-   const hideGraphsOnChange = () => {
+  const hideGraphsOnChange = () => {
     if (showGraphs) {
       setShowGraphs(false);
     }
   };
 
-   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const raw = value.replace(/[^0-9.]/g, "");
     let num = parseFloat(raw) || 0;
 
-    if (["vcPercentage","ventureDebtPercentage","warrantCoverage","founderOwnership"].includes(name)) {
+    if (
+      [
+        "vcPercentage",
+        "ventureDebtPercentage",
+        "warrantCoverage",
+        "founderOwnership",
+      ].includes(name)
+    ) {
       num = Math.min(Math.max(num, 0), 100);
     }
 
-    setDisplayInputs(prev => ({
+    setDisplayInputs((prev) => ({
       ...prev,
-      [name]: formatInput(raw)
+      [name]: formatInput(raw),
     }));
 
-    setInputs(prev => ({
+    setInputs((prev) => ({
       ...prev,
       [name]: num,
       ...(name === "founderOwnership"
         ? { otherInvestorsOwnership: 100 - num }
-        : {})
+        : {}),
     }));
 
     hideGraphsOnChange();
   };
 
-   const handleHybridInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHybridInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let num = parseFloat(value.replace(/[^0-9.]/g, "")) || 0;
     num = Math.min(Math.max(num, 0), 100);
 
-    const otherName = name === "vcPercentage"
-      ? "ventureDebtPercentage"
-      : "vcPercentage";
+    const otherName =
+      name === "vcPercentage" ? "ventureDebtPercentage" : "vcPercentage";
     const otherValue = 100 - num;
 
-    setDisplayInputs(prev => ({
+    setDisplayInputs((prev) => ({
       ...prev,
       [name]: formatInput(num.toString()),
-      [otherName]: formatInput(otherValue.toString())
+      [otherName]: formatInput(otherValue.toString()),
     }));
 
-    setInputs(prev => ({
+    setInputs((prev) => ({
       ...prev,
       [name]: num,
-      [otherName]: otherValue
+      [otherName]: otherValue,
     }));
 
     hideGraphsOnChange();
   };
 
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputs(prev => ({ ...prev, showHybridOption: e.target.checked }));
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((prev) => ({ ...prev, showHybridOption: e.target.checked }));
     hideGraphsOnChange();
   };
 
@@ -151,7 +157,8 @@ function App() {
         : true) &&
       inputs.ventureDebtInterestRate > 0 &&
       inputs.ventureDebtTerm > 0 &&
-      inputs.warrantCoverage > 0 &&
+      displayInputs.warrantCoverage !== "" &&
+      inputs.warrantCoverage >= 0 &&
       inputs.exitMultiple > 0
     );
   };
@@ -162,13 +169,16 @@ function App() {
       setShowGraphs(true);
       // scroll into view after render
       setTimeout(() => {
-        graphRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        graphRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }, 0);
     } else {
       setShowGraphs(false);
     }
   };
-  
+
   // Results state
   const [results, setResults] = useState({
     vcDilution: 0,
@@ -192,16 +202,16 @@ function App() {
     blendExitValue: 0,
     blendInterestPayments: 0,
   });
-  
+
   // Pie chart data
-  
+
   const [pieData, setPieData] = useState<PieDataType>({
     current: [],
     vc: [],
     debt: [],
     blend: [],
   });
-  
+
   // Colors for pie charts
   const COLORS = ["#0057FF", "#888888", "#000000"];
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -228,19 +238,22 @@ function App() {
   ]);
 
   useEffect(() => {
-  setIsButtonEnabled(
-    inputs.showHybridOption
-      ? inputs.vcPercentage > 0 && inputs.ventureDebtPercentage > 0
-      : true
-  );
-}, [inputs.vcPercentage, inputs.ventureDebtPercentage, inputs.showHybridOption]);
-
+    setIsButtonEnabled(
+      inputs.showHybridOption
+        ? inputs.vcPercentage > 0 && inputs.ventureDebtPercentage > 0
+        : true
+    );
+  }, [
+    inputs.vcPercentage,
+    inputs.ventureDebtPercentage,
+    inputs.showHybridOption,
+  ]);
 
   useEffect(() => {
-  if (showGraphs && graphRef.current) {
-    graphRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-}, [showGraphs]);
+    if (showGraphs && graphRef.current) {
+      graphRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showGraphs]);
 
   useEffect(() => {
     // Calculate funding amounts for each source
@@ -452,20 +465,6 @@ function App() {
   ];
 
   const valorGlobo = (results.exitValueDifference / 1000000).toFixed(1);
-
-
- 
-
-
-
-
-
-
-  
-
-
-
-  
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-100  shadow-md space-y-6">
@@ -774,15 +773,14 @@ function App() {
                 </span>
               </div>
             </div>
-
-            {/* Warrant Coverage (Debe tener el mismo ancho que los otros) */}
             <div className="md:col-span-1 space-y-2">
               <label className="text-sm font-medium text-black">
                 Warrant Coverage (%)
-                {((formSubmitted && inputs.warrantCoverage === 0) ||
-                  isNaN(inputs.warrantCoverage)) && (
-                  <span className="text-red-500 ml-2">Required</span>
-                )}
+                {formSubmitted &&
+                  (displayInputs.warrantCoverage === "" ||
+                    isNaN(inputs.warrantCoverage)) && (
+                    <span className="text-red-500 ml-2">Required</span>
+                  )}
               </label>
               <div className="relative">
                 <input
@@ -792,7 +790,9 @@ function App() {
                   placeholder={placeholder.warrantCoverage.toString()}
                   onChange={handleInputChange}
                   className={`w-full pl-7 p-2 border ${
-                    formSubmitted && inputs.companyValuation === 0
+                    formSubmitted &&
+                    (displayInputs.warrantCoverage === "" ||
+                      isNaN(inputs.warrantCoverage))
                       ? "border-red-500"
                       : "border-gray-300"
                   } rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
